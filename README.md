@@ -1,6 +1,6 @@
 # ansible-docker-firefly-iii
 
-The goal for this project is make it as easy and convenient as possible to deploy a Dockerised instance of firefly-iii using Ansible.
+The goal for this project is make it as easy and convenient as possible to deploy a Dockerised instance of Firefly-iii behind an Nginx reverse proxy with Letsencrypt certificate using a Cloudflare DNS challenge via Ansible.
 
 ## Requirements
 * [Hosted DNS with Cloudflare](https://www.cloudflare.com/dns/). It's fast and free.
