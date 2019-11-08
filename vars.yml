@@ -1,0 +1,23 @@
+---
+# Changeable .env variables
+HOST: firefly
+FQDN: firefly.example.com
+DOMAIN: example.com
+EMAIL: myemail@example.com
+APP_KEY: R@nd0m32Chars
+TIMEZONE: Africa/Johannesburg
+APP_URL: http://firefly
+MAIL_DRIVER: sendmail
+LOG_CHANNEL: stdout
+HOST_IP: x.x.x.x
+# Docker & related
+DOCKER_IMAGE_FIREFLY: jc5x/firefly-iii:latest-arm
+DOCKER_IMAGE_POSTGRES: postgres:10
+DOCKER_IMAGE_NGINX: nginx:latest
+DOCKER_NETWORK_NAME: firefly_iii_net
+FF_APP_PORT: 81
+FF_NGINX_PORT: 443
+DB_PASSWORD: firefly
+CF_EMAIL: mycloudflareemail@example.com
+CF_TOKEN: mycloudflareapikey
+...

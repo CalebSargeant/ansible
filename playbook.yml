@@ -1,0 +1,11 @@
+---
+- hosts: firefly
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars.yml
+  roles:
+    - docker-install
+    - letsencrypt
+    - docker-firefly
+...
