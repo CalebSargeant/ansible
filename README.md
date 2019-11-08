@@ -2,6 +2,11 @@
 
 The goal for this project is make it as easy and convenient as possible to deploy a Dockerised instance of firefly-iii using Ansible.
 
+## Requirements
+* [Hosted DNS with Cloudflare](https://www.cloudflare.com/dns/). It's fast and free.
+* [Ubuntu 18.04.3 LTS (Bionic Beaver)](http://releases.ubuntu.com/18.04/) (I have only tested on this Linux distro).
+* TCP 443 Port forwarding on your router (unless you choose a custom port). Only if you want to access your instance publicly, asuming you are using a home-server.
+
 ## Prerequisites
 ### Ansible
 The first thing you will need is an ansible installed on your management station (desktop/laptop, probably where you are reading this from). Please scroll down to your OS.
