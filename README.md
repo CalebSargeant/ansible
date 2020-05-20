@@ -1,6 +1,6 @@
 # Ansible
 
-A home for all of my Ansible playsbooks.
+A home for all of my Ansible playbooks.
 
 ## Prerequisites
 ### Ansible
@@ -22,4 +22,4 @@ You will find the hosts.yml file in the root of this project. Change `x.x.x.x` t
 I recommend you `cd` into the root of this project, so that you can just execute `ansible-playbook -i hosts.yml playbook.yml`.
 
 ## License
-[MIT License](https://github.com/CalebSargeant/ansible/blob/master/LICENSE) 
+[MIT License](https://github.com/CalebSargeant/ansible/blob/master/LICENSE)
