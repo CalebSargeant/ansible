@@ -1,0 +1,10 @@
+---
+- hosts: valguero
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars/ark/ark.yml
+  - vars/ark/ark-valguero.yml
+  roles:
+    - ark/config
+...

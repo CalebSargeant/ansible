@@ -1,0 +1,8 @@
+---
+- hosts: router
+  gather_facts: false
+  vars_files:
+  - vars/general/fh.yml
+  roles:
+    - cisco/router-nat
+...

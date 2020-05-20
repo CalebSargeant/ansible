@@ -1,0 +1,11 @@
+---
+- hosts: firefly
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars/pivpn/general.yml
+  - vars/pivpn/setupVars.yml
+  roles:
+#    - general/update-upgrade
+    - pivpn/install
+...

@@ -1,0 +1,12 @@
+---
+- hosts: hiole
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars/pihole/general.yml
+  - vars/pihole/safesearch.yml
+  - vars/pihole/setupVars.yml
+  roles:
+    - pihole/install
+    - pihole/safesearch
+...

@@ -1,0 +1,95 @@
+---
+#- name: Gather IOS Facts
+#  ios_facts:
+#    gather_subset: all
+
+- name: Disable Access-Groups
+  ios_config:
+    backup: yes
+    lines:
+      - no ip access-group VLAN{{ item.vlan }} in
+    parents: interface Vlan{{ item.vlan }}
+    match: exact
+  loop:
+    - { vlan: '{{ FH_USERS_VLAN_NUM }}', subnet: '{{ FH_USERS_SUBNET_NUM }}', des: 'FH_USERS' }
+    - { vlan: '{{ FH_DMZ_VLAN_NUM }}', subnet: '{{ FH_DMZ_SUBNET_NUM }}', des: 'FH_DMZ' }
+    - { vlan: '{{ SARGEANT_VLAN_NUM }}', subnet: '{{ SARGEANT_SUBNET_NUM }}', des: 'SARGEANT' }
+
+- name: ACL FH_USERS
+  ios_config:
+    backup: yes
+    lines:
+      - permit udp any host {{ SERVER2_IP }} eq domain
+      - permit udp any host {{ SERVER1_IP }} eq domain
+      - permit udp any host {{ ROUTER_IP }} eq domain
+      - deny udp any any eq domain
+      - deny tcp any any eq domain
+      - permit ip any 10.0.{{ FH_USERS_SUBNET_NUM }}.0 0.0.0.255
+      - deny ip any 10.0.0.0 0.255.255.255
+      - deny ip any 172.16.0.0 0.15.255.255
+      - deny ip any 192.168.0.0 0.0.255.255
+      - deny ip any 169.254.0.0 0.0.255.255
+      - permit ip any any
+    parents: ip access-list extended FH_USERS
+    before: no ip access-list extended FH_USERS
+    match: exact
+
+- name: ACL FH_DMZ
+  ios_config:
+    backup: yes
+    lines:
+      - permit icmp any any
+      - permit udp any host 208.67.222.222 eq domain
+      - permit udp any host 208.67.220.220 eq domain
+      - permit udp any host {{ SERVER2_IP }} eq domain
+      - permit udp any host {{ SERVER1_IP }} eq domain
+      - permit udp any host {{ ROUTER_IP }} eq domain
+      - deny udp any any eq domain
+      - deny tcp any any eq domain
+      - permit ip any 10.0.{{ FH_USERS_SUBNET_NUM }}.0 0.0.0.255
+      - permit ip any 10.0.{{ FH_DMZ_SUBNET_NUM }}.0 0.0.0.255
+      - permit ip any 10.0.{{ SARGEANT_SUBNET_NUM }}.0 0.0.0.255
+      - permit ip any {{ UPLINK_SUBNET_NETWORK_ADDRESS }} 0.0.0.3
+      - deny ip any 10.0.0.0 0.255.255.255
+      - deny ip any 172.16.0.0 0.15.255.255
+      - deny ip any 192.168.0.0 0.0.255.255
+      - deny ip any 169.254.0.0 0.0.255.255
+      - permit ip any any
+    parents: ip access-list extended FH_DMZ
+    before: no ip access-list extended FH_DMZ
+    match: exact
+
+- name: ACL SARGEANT
+  ios_config:
+    backup: yes
+    lines:
+      - permit icmp any any
+      - permit udp any host {{ SERVER2_IP }} eq domain
+      - permit udp any host {{ SERVER1_IP }} eq domain
+      - permit udp any host {{ ROUTER_IP }} eq domain
+      - deny udp any any eq domain
+      - deny tcp any any eq domain
+      - permit ip any 10.0.{{ FH_USERS_SUBNET_NUM }}.0 0.0.0.255
+      - permit ip any 10.0.{{ FH_DMZ_SUBNET_NUM }}.0 0.0.0.255
+      - permit ip any 10.0.{{ SARGEANT_SUBNET_NUM }}.0 0.0.0.255
+      - permit ip any {{ UPLINK_SUBNET_NETWORK_ADDRESS }} 0.0.0.3
+      - deny ip any 10.0.0.0 0.255.255.255
+      - deny ip any 172.16.0.0 0.15.255.255
+      - deny ip any 192.168.0.0 0.0.255.255
+      - deny ip any 169.254.0.0 0.0.255.255
+      - permit ip any any
+    parents: ip access-list extended SARGEANT
+    before: no ip access-list extended SARGEANT
+    match: exact
+
+- name: Enable Access-Groups
+  ios_config:
+    lines:
+      - ip access-group VLAN{{ item.vlan }} in
+    parents: interface Vlan{{ item.vlan }}
+    match: exact
+  loop:
+    - { vlan: '{{ FH_USERS_VLAN_NUM }}', subnet: '{{ FH_USERS_SUBNET_NUM }}', des: 'FH_USERS' }
+    - { vlan: '{{ FH_DMZ_VLAN_NUM }}', subnet: '{{ FH_DMZ_SUBNET_NUM }}', des: 'FH_DMZ' }
+    - { vlan: '{{ SARGEANT_VLAN_NUM }}', subnet: '{{ SARGEANT_SUBNET_NUM }}', des: 'SARGEANT' }
+...

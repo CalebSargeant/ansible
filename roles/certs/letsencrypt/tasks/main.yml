@@ -1,0 +1,45 @@
+---
+- name: Add Certbot Repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+    state: present
+
+- name: Apt Update
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+
+- name: Install Required System Packages
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - certbot
+    - python3-certbot-dns-cloudflare
+
+- name: Copy cloudflare.ini
+  template:
+    src: templates/cloudflare.ini.j2
+    dest: /etc/letsencrypt/cloudflare.ini
+    mode: '0400'
+
+# SOMETIMES YOU HAVE TO RUN THIS COMMAND MANUALLY (PROBABLY FIRST TIME), SO HASH OUT FIRST TIME
+#- name: Letsencrypt Certificate
+#  command: /usr/bin/certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini -d {{ DOMAIN }},*.{{ DOMAIN }} --preferred-challenges dns-01
+#  register: res
+#  failed_when: false
+#  changed_when: false
+
+- name: Cert Renewal Cron Job
+  cron:
+    name: "Cert Renewal"
+    minute: "0"
+    hour: "0"
+    day: "1"
+    month: "*"
+    weekday: "*"
+    job: /usr/bin/certbot renew --quiet --post-hook "/usr/bin/docker exec {{ DOCKER_CONTAINER_NGINX
+     }} nginx -s reload" > /dev/null 2>&1
+...

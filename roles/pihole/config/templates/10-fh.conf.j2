@@ -1,0 +1,26 @@
+### FRANKLIN HOUSE
+# Networking
+host-record=router.{{ DOMAIN_1 }},{{ ROUTER_IP }}
+host-record=switch.{{ DOMAIN_1 }},{{ SWITCH_IP }}
+# Servers
+host-record=valguero.{{ DOMAIN_1 }},{{ SERVER1_IP }}
+cname=server1.{{ DOMAIN_1 }},server.{{ DOMAIN_1 }},cloud.{{ DOMAIN_1 }},valguero.{{ DOMAIN_1 }}
+host-record=scorchedearth.{{ DOMAIN_1 }},{{ SERVER2_IP }}
+cname=server2.{{ DOMAIN_1 }},scorchedearth.{{ DOMAIN_1 }}
+# Access Points
+cname=unifi.{{ DOMAIN_1 }},p01.hostifi.net
+host-record=void6.{{ DOMAIN_1 }},{{ VOID6_IP }}
+host-record=void7.{{ DOMAIN_1 }},{{ VOID7_IP }}
+host-record=void8.{{ DOMAIN_1 }},{{ VOID8_IP }}
+host-record=void13.{{ DOMAIN_1 }},{{ VOID13_IP }}
+# Other
+host-record=davesprinter.{{ DOMAIN_1 }},{{ DAVESPRINTER_IP }}
+host-record=dvr1.{{ DOMAIN_1 }},{{ DVR1_IP }}
+host-record=dvr2.{{ DOMAIN_1 }},{{ DVR2_IP }}
+
+### SARGEANT
+host-record=traceyprinter.{{ DOMAIN_2 }},{{ TRACEYPRINTER_IP }}
+host-record=firefly.{{ DOMAIN_2 }},{{ FIREFLY_IP }}
+cname=server.{{ DOMAIN_2 }},firefly.{{ DOMAIN_2 }}
+host-record=ap.{{ DOMAIN_2 }},{{ CISCOAP_IP }}
+host-record=router.{{ DOMAIN_2 }},{{ DLINK_IP }}

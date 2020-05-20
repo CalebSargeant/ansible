@@ -1,0 +1,27 @@
+---
+- name: Configure Hosts
+  ios_config:
+    backup: yes
+    lines:
+      - ip host router.{{ DOMAIN_1 }} {{ ROUTER_IP }}
+      - ip host switch.{{ DOMAIN_1 }} {{ SWITCH_IP }}
+      - ip host server.{{ DOMAIN_1 }} {{ SERVER1_IP }}
+      - ip host server1.{{ DOMAIN_1 }} {{ SERVER1_IP }}
+      - ip host server2.{{ DOMAIN_1 }} {{ SERVER2_IP }}
+      - ip host cloud.{{ DOMAIN_1 }} {{ SERVER1_IP }}
+      - ip host valguero.{{ DOMAIN_1 }} {{ SERVER1_IP }}
+      - ip host scorchedearth.{{ DOMAIN_1 }} {{ SERVER2_IP }}
+      - ip host void6.{{ DOMAIN_1 }} {{ VOID6_IP }}
+      - ip host void7.{{ DOMAIN_1 }} {{ VOID7_IP }}
+      - ip host void8.{{ DOMAIN_1 }} {{ VOID8_IP }}
+      - ip host void13.{{ DOMAIN_1 }} {{ VOID13_IP }}
+      - ip host dvr1.{{ DOMAIN_1 }} {{ DVR1_IP }}
+      - ip host dvr2.{{ DOMAIN_1 }} {{ DVR2_IP }}
+      - ip host davesprinter.{{ DOMAIN_1 }} {{ DAVESPRINTER_IP }}
+      - ip host server.{{ DOMAIN_2 }} {{ FIREFLY_IP }}
+      - ip host firefly.{{ DOMAIN_2 }} {{ FIREFLY_IP }}
+      - ip host ap.{{ DOMAIN_2 }} {{ CISCOAP_IP }}
+      - ip host router.{{ DOMAIN_2 }} {{ DLINK_IP }}
+      - ip host traceyprinter.{{ DOMAIN_2 }} {{ TRACEYPRINTER_IP }}
+    save_when: modified
+...

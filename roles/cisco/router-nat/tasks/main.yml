@@ -1,0 +1,47 @@
+---
+#- name: Gather IOS Facts
+#  ios_facts:
+#    gather_subset: all
+
+- name: Configure NATting
+  ios_config:
+    backup: yes
+    lines:
+      ### FH_DMZ
+      # Switch SSH
+      - ip nat inside source static tcp {{ SWITCH_IP }} {{ SWITCH_PRI_PRT }} interface {{ RTR_INT_INS }} {{ SWITCH_PUB_PRT }}
+      # SERVER1 SSH
+      - ip nat inside source static tcp {{ SERVER1_IP }} {{ SERVER1_PRI_PRT }} interface {{ RTR_INT_INS }} {{ SERVER1_PUB_PRT }}
+      # SERVER2 SSH
+      - ip nat inside source static tcp {{ SERVER2_IP }} {{ SERVER2_PRI_PRT }} interface {{ RTR_INT_INS }} {{ SERVER2_PUB_PRT }}
+      # VOID6 SSH
+      - ip nat inside source static tcp {{ VOID6_IP }} {{ VOID6_PRI_PRT }} interface {{ RTR_INT_INS }} {{ VOID6_PUB_PRT }}
+      # VOID7 SSH
+      - ip nat inside source static tcp {{ VOID7_IP }} {{ VOID7_PRI_PRT }} interface {{ RTR_INT_INS }} {{ VOID7_PUB_PRT }}
+      # VOID8 SSH
+      - ip nat inside source static tcp {{ VOID8_IP }} {{ VOID8_PRI_PRT }} interface {{ RTR_INT_INS }} {{ VOID8_PUB_PRT }}
+      # VOID13 SSH
+      - ip nat inside source static tcp {{ VOID13_IP }} {{ VOID13_PRI_PRT }} interface {{ RTR_INT_INS }} {{ VOID13_PUB_PRT }}
+      # DVR1 HTTP
+      - ip nat inside source static tcp {{ DVR1_IP }} {{ DVR1_PRI_PRT }} interface {{ RTR_INT_INS }} {{ DVR1_PUB_PRT }}
+      # DVR2 HTTP
+      - ip nat inside source static tcp {{ DVR2_IP }} {{ DVR2_PRI_PRT }} interface {{ RTR_INT_INS }} {{ DVR2_PUB_PRT }}
+      # DVR3 HTTP
+      - ip nat inside source static tcp {{ DVR3_IP }} {{ DVR3_PRI_PRT }} interface {{ RTR_INT_INS }} {{ DVR3_PUB_PRT }}
+      # Plex
+      - ip nat inside source static tcp {{ SERVER3_IP }} {{ PLEX_PRI_PRT }} interface {{ RTR_INT_INS }} {{ PLEX_PUB_PRT }}
+      # Medusa
+      - ip nat inside source static tcp {{ SERVER1_IP }} {{ MEDUSA_PRI_PRT }} interface {{ RTR_INT_INS }} {{ MEDUSA_PUB_PRT }}
+      ### SARGEANT
+      # FIREFLY SSH
+      - ip nat inside source static tcp {{ FIREFLY_IP }} {{ FIREFLY_PRI_SSH_PRT }} interface {{ RTR_INT_INS }} {{ FIREFLY_PUB_SSH_PRT }}
+      # FIREFLY HTTPS
+      - ip nat inside source static tcp {{ FIREFLY_IP }} {{ FIREFLY_PRI_HTTPS_PRT }} interface {{ RTR_INT_INS }} {{ FIREFLY_PUB_HTTPS_PRT }}
+      # CALEBDESKTOP RDP
+      - ip nat inside source static tcp {{ CALEBDESKTOP_IP }} {{ CALEBDESKTOP_PRI_PRT }} interface {{ RTR_INT_INS }} {{ CALEBDESKTOP_PUB_PRT }}
+      # TRACEYDESKTOP RDP
+      - ip nat inside source static tcp {{ TRACEYDESKTOP_IP }} {{ TRACEYDESKTOP_PRI_PRT }} interface {{ RTR_INT_INS }} {{ TRACEYDESKTOP_PUB_PRT }}
+    save_when: modified
+    before:
+      - do clear ip nat translation *
+...

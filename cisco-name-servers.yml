@@ -1,0 +1,8 @@
+---
+- hosts: cisco
+  gather_facts: false
+  vars_files:
+  - vars/general/fh.yml
+  roles:
+    - cisco/name-servers
+...

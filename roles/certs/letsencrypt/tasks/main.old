@@ -1,0 +1,122 @@
+---
+- name: Add Certbot Repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+    state: present
+
+- name: Apt Update
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+
+- name: Install Required System Packages
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - certbot
+    - python3-certbot-dns-cloudflare
+
+# https://trond.sjovang.no/snippet/letsencrypt-ansible/
+- name: Create folder to store everything
+  file:
+    path: /etc/letsencrypt
+    state: directory
+    mode: 0700
+
+- name: Create live folder
+  file:
+    path: /etc/letsencrypt/live
+    state: directory
+    mode: 0700
+
+- name: Copy cloudflare.ini
+  template:
+    src: templates/cloudflare.ini.j2
+    dest: /etc/letsencrypt/cloudflare.ini
+    mode: '0400'
+
+- name: Create Letsencrypt Account private key
+  openssl_privatekey:
+    path: '/etc/letsencrypt/letsencrypt.pem'
+
+- name: Create Domain Private Key
+  openssl_privatekey:
+    path: '/etc/letsencrypt/live/{{ CF_DOMAIN }}/privkey.pem'
+
+- name: Create Certificate Signing Request
+  openssl_csr:
+    path: '/etc/letsencrypt/{{ CF_DOMAIN }}.csr'
+    privatekey_path: '/etc/letsencrypt/live/{{ CF_DOMAIN }}/privkey.pem'
+    common_name: '{{ CF_DOMAIN }}'
+    subject_alt_name: "{{ item.value | map('regex_replace', '^', 'DNS:') | list }}"
+  with_dict:
+    dns_server:
+    - '{{ CF_DOMAIN }}'
+    - '*.{{ CF_DOMAIN }}'
+
+- name: Create ACME Challenge
+  acme_certificate:
+    account_key_src: '/etc/letsencrypt/letsencrypt.pem'
+    acme_directory: 'https://acme-v02.api.letsencrypt.org/directory'
+    acme_version: 2
+    challenge: dns-01
+    csr: '/etc/letsencrypt/{{ CF_DOMAIN }}.csr'
+    fullchain_dest: '/etc/letsencrypt/live/{{ CF_DOMAIN }}/fullchain.pem'
+    terms_agreed: yes
+  register: le_challenge
+
+- name: Update DNS record
+  cloudflare_dns:
+    account_api_token: '{{ CF_TOKEN }}'
+    account_email: '{{ CF_EMAIL }}'
+    zone: '{{ CF_DOMAIN }}'
+    record: "{{ item['value']['dns-01']['resource'] }}"
+    type: TXT
+    value: "{{ item['value']['dns-01']['resource_value'] }}"
+  when: le_challenge is changed
+  with_dict: "{{ le_challenge['challenge_data'] }}"
+  ignore_errors: yes
+
+- name: Wait a bit to let DNS update
+  wait_for:
+    timeout: 30
+  when: le_challenge is changed
+
+- name: Validate ACME Challenge
+  acme_certificate:
+    account_key_src: '/etc/letsencrypt/letsencrypt.pem'
+    acme_directory: 'https://acme-v02.api.letsencrypt.org/directory'
+    acme_version: 2
+    challenge: dns-01
+    csr: '/etc/letsencrypt/{{ CF_DOMAIN }}.csr'
+    data: '{{ le_challenge }}'
+    fullchain_dest: '/etc/letsencrypt/{{ CF_DOMAIN }}/fullchain.pem'
+    terms_agreed: yes
+  when: le_challenge is changed
+
+- name: Remove TXT record after validating
+  cloudflare_dns:
+    account_api_token: '{{ CF_TOKEN }}'
+    account_email: '{{ CF_EMAIL }}'
+    zone: '{{ CF_DOMAIN }}'
+    record: "{{ item['value']['dns-01']['resource'] }}"
+    type: TXT
+    value: "{{ item['value']['dns-01']['resource_value'] }}"
+    state: absent
+  when: le_challenge is changed
+  with_dict: "{{ le_challenge['challenge_data'] }}"
+  ignore_errors: yes
+
+- name: Cert Renewal Cron Job
+  cron:
+    name: "Cert Renewal"
+    minute: "0"
+    hour: "0"
+    day: "1"
+    month: "*"
+    weekday: "*"
+    job: /usr/bin/certbot renew --quiet --post-hook "/usr/bin/docker exec firefly_iii_nginx nginx -s reload" > /dev/null 2>&1
+...

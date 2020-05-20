@@ -1,0 +1,8 @@
+---
+DATA_LOCATION_DOWNLOADS: /mnt/data/share
+DATA_LOCATION_SERIES: /mnt/server1
+DATA_LOCATION_SERIES2: /mnt/data/share
+DATA_LOCATION_MOVIES: /mnt/server1
+DATA_LOCATION_MOVIES2: /mnt/data/share
+DATA_LOCATION_TRAINING: /mnt/server1
+...

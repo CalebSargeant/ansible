@@ -1,0 +1,69 @@
+---
+- name: Install i386 DPKG
+  blockinfile:
+    dest: /var/lib/dpkg/arch
+    block: |
+      amd64
+      i386
+    create: yes
+
+- name: Apt Update & Upgrade
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: Accept Steam License
+  debconf:
+    name: steamcmd
+    question: steam/question
+    value: 'I AGREE'
+    vtype: select
+
+- name: Install SteamCMD & Dependancies
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - steamcmd
+    - perl-modules
+    - curl
+    - lsof
+    - libc6-i386
+    - lib32gcc1
+    - bzip2
+
+- name: Increase maximum allowed open files
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "fs.file-max=100000"
+
+- name: Increase hard and soft file limits
+  blockinfile:
+    dest: /etc/security/limits.conf
+    block: |
+      * soft nofile 100000
+      * hard nofile 100000
+
+- name: Create Steam User
+  user:
+    name: steam
+
+- name: Install ArkManager
+  shell: curl -sL http://git.io/vtf5N | sudo bash -s steam
+  register: res
+  failed_when: false
+  changed_when: false
+
+- name: Install Ark
+  become: yes
+  become_user: steam
+  command: arkmanager install
+
+- name: Start Ark
+  command: arkmanager start
+  register: res
+  failed_when: false
+  changed_when: false
+...

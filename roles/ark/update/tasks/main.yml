@@ -1,0 +1,19 @@
+---
+- name: Stop Ark
+  command: arkmanager stop
+  register: res
+  failed_when: false
+  changed_when: false
+
+- name: Update Ark & Mods
+  command: arkmanager update --update-mods --backup
+  register: res
+  failed_when: false
+  changed_when: false
+
+- name: Start Ark
+  command: arkmanager start
+  register: res
+  failed_when: false
+  changed_when: false
+...

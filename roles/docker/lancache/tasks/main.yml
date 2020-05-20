@@ -1,0 +1,28 @@
+---
+#- name: Symlink OwnCloud Volume to /mnt/data
+#  file:
+#    src: /mnt/data/owncloud_files/
+#    dest: /var/lib/docker/volumes/owncloud_files
+#    state: link
+
+- name: Stop Resolved
+  service:
+    name: systemd-resolved
+    state: stopped
+
+- name: Synchronize resolved.conf
+  synchronize:
+    src: templates/resolved.conf
+    dest: /etc/systemd/resolved.conf
+
+- name: Start Resolved
+  service:
+    name: systemd-resolved
+    state: started
+
+#sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+#export LANCACHE_IP=`hostname -I | cut -d' ' -f1`
+#docker run -d --restart unless-stopped --name lancache -v /mnt/data/owncloud_files/_data/files/admin/files/.lancache/data:/data/cache -v /mnt/data/owncloud_files/_data/files/admin/files/.lancache/logs:/data/logs -p $LANCACHE_IP:80:80 lancachenet/monolithic:latest
+#docker run -d --restart unless-stopped --name lancache-dns -p $LANCACHE_IP:53:53/udp -e USE_GENERIC_CACHE=true -e LANCACHE_IP=$LANCACHE_IP lancachenet/lancache-dns:latest
+#docker run -d --restart unless-stopped --name lancache-sniproxy -p $LANCACHE_IP:443:443 lancachenet/sniproxy:latest
+...

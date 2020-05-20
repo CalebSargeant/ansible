@@ -1,0 +1,34 @@
+---
+- name: NGINX container
+  docker_container:
+    name: "{{ TORRENT_NGINX_NAME }}"
+    image: "{{ TORRENT_NGINX_IMAGE }}"
+    restart_policy: always
+    published_ports: "{{ TORRENT_NGINX_PORT }}:443"
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_NGINX_IP }}"
+    #purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - "{{ TORRENT_NGINX_NAME }}:/etc/nginx"
+      - /etc/letsencrypt:/etc/letsencrypt
+    env:
+      VIRTUAL_HOST: "{{ TORRENT_FQDN }}"
+
+- name: NGINX sites-enabled directory
+  file:
+    path: /var/lib/docker/volumes/torrent_nginx/_data/sites-enabled
+    state: directory
+
+- name: NGINX mime.types
+  synchronize:
+    src: templates/nginx/mime.types
+    dest: /var/lib/docker/volumes/torrent_nginx/_data/mime.types
+
+- name: NGINX conf
+  template:
+    src: templates/nginx/nginx.conf.j2
+    dest: /var/lib/docker/volumes/torrent_nginx/_data/nginx.conf
+  register: nginx_config
+...

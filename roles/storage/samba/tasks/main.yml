@@ -1,0 +1,37 @@
+---
+- name: Install Samba
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - samba
+
+- name: Create User admin
+  user:
+    name: admin
+    password: '{{ sambapass }}'
+    groups:
+      - www-data
+    state: present
+    system: yes
+    shell: /sbin/nologin
+    createhome: no
+
+# This doesnt / didnt work???
+- name: Create Samba User admin
+  shell: "printf '{{ sambapass }}\n{{ sambapass }}\n' | smbpasswd -a {{ sambauser }}"
+  failed_when: false
+  changed_when: false
+
+- name: Configure smb.conf
+  synchronize:
+    src: templates/smb.conf
+    dest: /etc/samba/smb.conf
+
+- name: Restart Samba Service
+  systemd:
+    state: restarted
+    name: smbd
+...

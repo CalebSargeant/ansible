@@ -1,0 +1,24 @@
+# https://www.howtoforge.com/tutorial/install-and-configure-drdb-for-network-filesystem-replication-debian-8/
+---
+- name: Apt Update & Upgrade
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+...
+
+
+# Install ZFS
+sudo apt install zfsutils-linux
+
+# Check which disks to use
+fdisk -l
+
+# Create the pool (data will be wiped!)
+sudo zpool create tank /dev/sdb /dev/sdc
+
+# Check Status
+sudo zpool status
+
+# Create ZFS Volume in pool or tank
+sudo zfs create -V 3486gb tank/vol

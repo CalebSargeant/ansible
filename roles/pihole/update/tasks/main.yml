@@ -1,0 +1,9 @@
+---
+- name: Update Pi-hole
+  command: "pihole -up"
+  register: update
+
+- debug:
+    var: update
+  when: update.changed
+...

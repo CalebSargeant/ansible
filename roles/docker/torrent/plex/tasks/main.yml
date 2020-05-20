@@ -1,0 +1,26 @@
+---
+- name: PLEX container
+  docker_container:
+    name: "{{ TORRENT_PLEX_NAME }}"
+    image: "{{ TORRENT_PLEX_IMAGE }}"
+    restart_policy: "no"
+    network_mode: host
+    #networks:
+    #  - name: "{{ TORRENT_NET_NAME }}"
+    #    ipv4_address: "{{ TORRENT_PLEX_IP }}"
+    #published_ports: "{{ TORRENT_PLEX_PORT }}:32400"
+    #purge_networks: yes
+    #networks_cli_compatible: no
+    volumes:
+      - "{{ TORRENT_PLEX_NAME }}:/config"
+      - "{{ DATA_LOCATION_MOVIES }}/Movies:/movies"
+      - "{{ DATA_LOCATION_MOVIES2 }}/Movies:/movies2"
+      - "{{ DATA_LOCATION_SERIES }}/Series:/series"
+      - "{{ DATA_LOCATION_SERIES2 }}/Series:/series2"
+      - "{{ DATA_LOCATION_TRAINING }}/Training:/training"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      VERSION: "{{ TORRENT_PLEX_VERSION }}"
+      PLEX_CLAIM: "{{ TORRENT_PLEX_CLAIM }}"
+...

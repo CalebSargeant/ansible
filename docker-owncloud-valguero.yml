@@ -1,0 +1,9 @@
+---
+- hosts: valguero
+  become: yes
+  become_method: sudo
+  vars_files:
+  #- vars/docker/docker-general.yml
+  roles:
+    - docker/owncloud
+...

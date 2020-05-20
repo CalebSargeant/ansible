@@ -1,0 +1,42 @@
+---
+- name: RADARR container
+  docker_container:
+    name: "{{ TORRENT_RADARR_NAME }}"
+    image: "{{ TORRENT_RADARR_IMAGE }}"
+    restart_policy: "no"
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_RADARR_IP }}"
+    published_ports: "{{ TORRENT_RADARR_PORT }}:{{ TORRENT_RADARR_PORT }}"
+    purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - "{{ TORRENT_RADARR_NAME }}:/config"
+      # Take note that the below are swapped - https://docs.linuxserver.io/images/docker-radarr#volume-mappings-v
+      - "{{ DATA_LOCATION_MOVIES }}/Movies:/movies2"
+      - "{{ DATA_LOCATION_MOVIES2 }}/Movies:/movies"
+      - "{{ DATA_LOCATION_DOWNLOADS }}/Torrents:/downloads"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+
+- name: RADARR config.xml
+  synchronize:
+    src: templates/config.xml
+    dest: /var/lib/docker/volumes/{{ TORRENT_RADARR_NAME }}/_data/config.xml
+  register: radarr_config
+
+- name: RADARR container restart
+  docker_container:
+    name: "{{ TORRENT_RADARR_NAME }}"
+    state: started
+    restart: yes
+  when: radarr_config.changed
+
+#- name: RADARR nginx
+#  template:
+#    src: templates/radarr/radarr.conf.j2
+#    dest: "/var/lib/docker/volumes/{{ TORRENT_NGINX_NAME }}/_data/sites-enabled/radarr.conf"
+#  register: nginx_config
+...

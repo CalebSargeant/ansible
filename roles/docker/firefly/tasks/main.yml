@@ -1,0 +1,101 @@
+# https://stackoverflow.com/questions/40920760/yaml-formatting-error-for-ansible
+---
+- name: Firefly Cron - Recurring Transactions
+  cron:
+    name: "Firefly Recurring Transactions"
+    minute: "45"
+    hour: "4"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/usr/bin/docker exec firefly_iii_app php /var/www/firefly-iii/artisan firefly:cron | mail -s \"[Cron] Firefly III - Recurring Transactions\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
+
+- name: Firefly Cron - Backups
+  cron:
+    name: "Firefly Backups"
+    minute: "50"
+    hour: "4"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/bin/bash -c 'for CONTAINER in firefly_iii_upload firefly_iii_export firefly_iii_nginx firefly_iii_db; do /usr/bin/docker run --rm -v \"$CONTAINER:/tmp/$CONTAINER\" -v \"/mnt/data/Backups/Firefly:/backup\" ubuntu tar -czvf \"/backup/`date +\\%C\\%y\\%m\\%d`-$CONTAINER.tar\" -C / \"tmp/$CONTAINER/\"; done > /tmp/firefly-backup.log && ls -hal /mnt/data/Backups/Firefly | grep `date +\\%C\\%y\\%m\\%d` && cat /tmp/firefly-backup.log' | mail -s \"[Cron] Firefly III - Backups\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
+
+- name: Copy .env file for firefly_iii_app
+  template:
+    src: templates/.env.j2
+    dest: /tmp/.env
+
+- name: Create Docker Network
+  docker_network:
+    name: firefly_iii_net
+
+- name: Create firefly_iii_db container
+  docker_container:
+    name: firefly_iii_db
+    image: "{{ DOCKER_IMAGE_POSTGRES }}"
+    restart_policy: always
+    networks:
+      - name: "{{ DOCKER_NETWORK_NAME }}"
+    purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - firefly_iii_db:/var/lib/postgresql/data
+    env:
+      POSTGRES_PASSWORD: "{{ DB_PASSWORD }}"
+      POSTGRES_USER: "firefly"
+
+- name: Create firefly_iii_app container
+  docker_container:
+    name: firefly_iii_app
+    image: "{{ DOCKER_IMAGE_FIREFLY }}"
+    restart_policy: always
+    published_ports: "{{ FF_APP_PORT }}:80"
+    networks:
+      - name: "{{ DOCKER_NETWORK_NAME }}"
+    purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - firefly_iii_export:/var/www/firefly-iii/storage/export
+      - firefly_iii_upload:/var/www/firefly-iii/storage/upload
+    env_file: /tmp/.env
+
+- name: Create firefly_iii_nginx container
+  docker_container:
+    name: firefly_iii_nginx
+    image: "{{ DOCKER_IMAGE_NGINX }}"
+    restart_policy: always
+    published_ports: "{{ FF_NGINX_PORT }}:443"
+    networks:
+      - name: "{{ DOCKER_NETWORK_NAME }}"
+    purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - firefly_iii_nginx:/etc/nginx
+      - /etc/letsencrypt:/etc/letsencrypt
+    env:
+      VIRTUAL_HOST: "{{ FQDN }}"
+
+- name: Create sites-enabled Directory
+  file:
+    path: /var/lib/docker/volumes/firefly_iii_nginx/_data/sites-enabled
+    state: directory
+
+- name: Copy Nginx Config
+  synchronize:
+    src: templates/nginx.conf
+    dest: /var/lib/docker/volumes/firefly_iii_nginx/_data/nginx.conf
+  register: nginx_config
+
+- name: Copy Nginx VHOST Config
+  template:
+    src: templates/firefly.conf.j2
+    dest: /var/lib/docker/volumes/firefly_iii_nginx/_data/sites-enabled/firefly.conf
+  register: nginx_vhost
+
+- name: Restart Nginx Container
+  docker_container:
+    name: firefly_iii_nginx
+    state: started
+    restart: yes
+  when: nginx_config.changed or nginx_vhost.changed
+...

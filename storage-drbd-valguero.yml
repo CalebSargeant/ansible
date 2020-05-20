@@ -1,0 +1,10 @@
+---
+- hosts: valguero
+  become: yes
+  become_method: sudo
+  vars_files:
+#  - vars/ark.yml
+#  - vars/ark-scorchedearth.yml
+  roles:
+    - storage/drbd
+...

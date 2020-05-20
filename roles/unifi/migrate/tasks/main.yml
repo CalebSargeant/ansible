@@ -1,0 +1,9 @@
+---
+- name: Migrate AP
+  raw: mca-cli-op set-inform {{ INFORM_URL }}
+#  register: output
+
+#- debug:
+#    var: output
+#  when: output.changed
+...

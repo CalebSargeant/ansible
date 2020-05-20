@@ -1,0 +1,67 @@
+---
+#- name: Gather IOS Facts
+#  ios_facts:
+#    gather_subset: all
+
+- name: Configure DHCP Pools
+  ios_config:
+    backup: yes
+    lines:
+      - network 10.0.{{ item.subnet }}.0 255.255.255.0
+      - default-router 10.0.{{ item.subnet }}.1
+      - dns-server {{ SERVER2_IP }} {{ SERVER1_IP }} {{ ROUTER_IP }}
+      - domain-name {{ item.domain }}
+    parents: ip dhcp pool VLAN{{ item.vlan }}
+    before: no ip dhcp pool VLAN{{ item.vlan }}
+    match: exact
+    save_when: modified
+  loop:
+    - { vlan: '{{ FH_USERS_VLAN_NUM }}', subnet: '{{ FH_USERS_SUBNET_NUM }}', domain: '{{ DOMAIN_1 }}' }
+    - { vlan: '{{ FH_DMZ_VLAN_NUM }}', subnet: '{{ FH_DMZ_SUBNET_NUM }}', domain: '{{ DOMAIN_1 }}' }
+    - { vlan: '{{ SARGEANT_VLAN_NUM }}', subnet: '{{ SARGEANT_VLAN_NUM }}', domain: '{{ DOMAIN_2 }}' }
+
+- name: Configure DHCP Exclusions
+  ios_config:
+    backup: yes
+    lines:
+      - ip dhcp excluded-address 10.0.{{ item.subnet }}.1 10.0.{{ item.subnet }}.50
+      - ip dhcp excluded-address 10.0.{{ item.subnet }}.101 10.0.{{ item.subnet }}.254
+    save_when: modified
+  loop:
+    - { vlan: '{{ FH_USERS_VLAN_NUM }}', subnet: '{{ FH_USERS_SUBNET_NUM }}' }
+    - { vlan: '{{ FH_DMZ_VLAN_NUM }}', subnet: '{{ FH_DMZ_SUBNET_NUM }}' }
+    - { vlan: '{{ SARGEANT_VLAN_NUM }}', subnet: '{{ SARGEANT_SUBNET_NUM }}' }
+
+- name: Configure DHCP Reservations
+  ios_config:
+    backup: yes
+    lines:
+      - ip dhcp pool {{ item.name }}
+      - host {{ item.ip }} 255.255.255.0
+      - client-identifier {{ item.cid }}
+    parents: ip dhcp pool {{ item.name }}
+    before: no ip dhcp pool {{ item.name }}
+      #- clear ip dhcp binding *
+    match: exact
+    save_when: modified
+  loop:
+    # VLAN 12
+    - { name: 'VOID6', ip: '{{ VOID6_IP }}', cid: '{{ VOID6_CID }}' }
+    - { name: 'VOID7', ip: '{{ VOID7_IP }}', cid: '{{ VOID7_CID }}' }
+    - { name: 'VOID8', ip: '{{ VOID8_IP }}', cid: '{{ VOID8_CID }}' }
+    - { name: 'VOID13', ip: '{{ VOID13_IP }}', cid: '{{ VOID13_CID }}' }
+    - { name: 'DAVESPRINTER', ip: '{{ DAVESPRINTER_IP }}', cid: '{{ DAVESPRINTER_CID }}' }
+    - { name: 'DVR1', ip: '{{ DVR1_IP }}', cid: '{{ DVR1_CID }}' }
+    - { name: 'DVR2', ip: '{{ DVR2_IP }}', cid: '{{ DVR2_CID }}' }
+    - { name: 'DVR3', ip: '{{ DVR3_IP }}', cid: '{{ DVR3_CID }}' }
+    # VLAN 13
+    - { name: 'FIREFLY', ip: '{{ FIREFLY_IP }}', cid: '{{ FIREFLY_CID }}' }
+    - { name: 'CISCOAP', ip: '{{ CISCOAP_IP }}', cid: '{{ CISCOAP_CID }}' }
+    - { name: 'TRACEYPRINTER', ip: '{{ TRACEYPRINTER_IP }}', cid: '{{ TRACEYPRINTER_CID }}' }
+    - { name: 'TRACEYDESKTOP', ip: '{{ TRACEYDESKTOP_IP }}', cid: '{{ TRACEYDESKTOP_CID }}' }
+    #- { name: 'TRACEYPHONE', ip: '{{ TRACEYPHONE_IP }}', cid: ''}
+    - { name: 'TRACEYLAPTOP', ip: '{{ TRACEYLAPTOP_IP }}', cid: '{{ TRACEYLAPTOP_CID }}' }
+    - { name: 'CALEBDESKTOP', ip: '{{ CALEBDESKTOP_IP }}', cid: '{{ CALEBDESKTOP_CID }}' }
+    - { name: 'CALEBPHONE', ip: '{{ CALEBPHONE_IP }}', cid: '{{ CALEBPHONE_CID }}' }
+    - { name: 'CALEBLAPTOP', ip: '{{ CALEBLAPTOP_IP }}', cid: '{{ CALEBLAPTOP_CID }}' }
+...

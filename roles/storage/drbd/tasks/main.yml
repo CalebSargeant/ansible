@@ -1,0 +1,31 @@
+---
+# https://www.howtoforge.com/tutorial/install-and-configure-drdb-for-network-filesystem-replication-debian-8/
+- name: Add mappings to /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ item.ip }} {{ item.name }} {{ item.name2 }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+  with_items:
+  - { name: server1.{{ DOMAIN_1 }}, name2: server1, ip: {{ SERVER1_IP }} }
+  - { name: server2.{{ DOMAIN_1 }}, name2: server2, ip: {{ SERVER2_IP }} }
+
+- name: Install DRBD
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - drbd-utils
+
+- name: Configure global_common.conf
+  synchronize:
+    src: templates/global_common.conf
+    dest: /etc/drbd.d/global_common.conf
+
+- name: Configure "data" DRBD Resource
+  template:
+    src: templates/data.res.j2
+    dest: /etc/drbd.d/data.res
+...

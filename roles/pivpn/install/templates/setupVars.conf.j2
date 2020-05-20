@@ -1,0 +1,37 @@
+# https://github.com/ljishen/pivpn-docker/blob/master/setupVars.conf
+########### DO NOT MODIFY ###########
+UNATTUPG="unattended-upgrades"
+pivpnInterface=eth0
+ENCRYPT=2048
+APPLY_TWO_POINT_FOUR=false
+DOWNLOAD_DH_PARAM=false
+
+########## CAN BE MODIFIED ##########
+# Only change the following values if
+# the default detection does not work.
+
+# DNS of the PiVPN server
+#IPv4dns=
+
+# Static IP Address of the PiVPN server
+#IPv4addr=
+
+# Your static IPv4 gateway
+#IPv4gw=
+
+# udp or tcp (lowercase, only choose TCP if you know why you need TCP)
+pivpnProto={{ PROTO }}
+
+# OpenVPN port
+PORT={{ PORT }}
+
+# The public IP or DNS name to connect to your server
+#PUBLICDNS=
+
+# Choose the DNS Provider for your VPN Clients
+OVPNDNS1={{ OVPNDNS1 }}
+OVPNDNS2={{ OVPNDNS2 }}
+
+# Client ovpn profile
+CLIENT_NAME={{ CLIENT_NAME }}
+CLIENT_PASS={{ CLIENT_PASS }}

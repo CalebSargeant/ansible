@@ -1,0 +1,41 @@
+<?php
+$CONFIG = array (
+  'htaccess.RewriteBase' => '/',
+  'memcache.local' => '\\OC\\Memcache\\APCu',
+  'apps_paths' =>
+  array (
+    0 =>
+    array (
+      'path' => '/var/www/html/apps',
+      'url' => '/apps',
+      'writable' => false,
+    ),
+    1 =>
+    array (
+      'path' => '/var/www/html/custom_apps',
+      'url' => '/custom_apps',
+      'writable' => true,
+    ),
+  ),
+  'instanceid' => 'ockjy3gqzsp9',
+  'passwordsalt' => 'NpCX1NjHAX/7m85dJPz9yxT+CGfWof',
+  'secret' => 'KF25RTe2oPAXDwoV9IuOUgEshI+WQ6W+q3+EwvvbrDlDrPeV',
+  'trusted_domains' =>
+  array (
+    0 => '{{ NC_FQDN }}:{{ NC_APP_PORT }}',
+  ),
+  'datadirectory' => '/var/www/html/data',
+  'dbtype' => 'pgsql',
+  'version' => '17.0.2.1',
+  'overwrite.cli.url' => 'http://{{ NC_FQDN }}:{{ NC_NGINX_PORT }}',
+  'overwritehost' => '{{ NC_FQDN }}:{{ NC_NGINX_PORT }}',
+  'overwriteprotocol' => 'https',
+  'dbname' => 'nextcloud',
+  'dbhost' => 'nextcloud_db',
+  'dbport' => '',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => 'oc_admin',
+  'dbpassword' => 'vjptu45r4cj7ux0gkpnr07p1sitq6r',
+  'installed' => true,
+  'maintenance' => false,
+);

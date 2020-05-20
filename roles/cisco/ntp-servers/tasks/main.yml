@@ -1,0 +1,9 @@
+---
+- name: Configure NTP Servers
+  ios_config:
+    backup: yes
+    lines:
+      - ntp update-calendar
+      - ntp server time.cloudflare.com
+    save_when: modified
+...

@@ -1,0 +1,8 @@
+---
+- hosts: ap
+  gather_facts: no
+  vars_files:
+  - vars/unifi/common.yml
+  roles:
+    - unifi/migrate
+...

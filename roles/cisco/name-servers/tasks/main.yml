@@ -1,0 +1,29 @@
+---
+#- name: Gather IOS Facts
+#  ios_facts:
+#    gather_subset: all
+
+- name: Remove old ip name-servers
+  ios_config:
+    backup: yes
+    lines:
+      - no ip name-server 208.67.220.220
+      - no ip name-server 208.67.222.222
+      - no ip name-server 169.1.1.2
+      - no ip name-server 169.1.1.4
+      - no ip name-server {{ FIREFLY_IP }}
+      - no ip name-server {{ SERVER1_IP }}
+      - no ip name-server {{ SERVER2_IP }}
+    save_when: modified
+
+- name: Add ip name-servers
+  ios_config:
+    backup: yes
+    lines:
+      - ip name-server {{ SERVER2_IP }} {{ SERVER1_IP }} 208.67.220.220 208.67.222.222
+    save_when: modified
+...
+
+ # when: ansible_net_hostname is search("{{ LOCATION }}")
+ # https://github.com/ansible/ansible/issues/22397#issuecomment-298957504
+ # when: "ansible_net_hostname.find('v=' ~ LOCATION) == -1"

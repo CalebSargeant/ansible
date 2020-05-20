@@ -1,0 +1,128 @@
+---
+- name: Cron - File Scan
+  cron:
+    name: "Nextcloud File Scan"
+    minute: "0"
+    hour: "*/12"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/usr/bin/docker exec -u www-data nextcloud_app /var/www/html/occ files:scan --all"
+
+- name: Create Docker Network
+  docker_network:
+    name: "{{ NC_NET_NAME }}"
+    ipam_config:
+      - subnet: "{{ NC_NET_SUBNET }}"
+        gateway: "{{ NC_NET_GW }}"
+        iprange: "{{ NC_NET_RANGE }}"
+        #aux_addresses:
+        #  nextcloud_db: "{{ NC_DB_IP }}"
+        #  nextcloud_app: "{{ NC_APP_IP }}"
+        #  nextcloud_nginx: "{{ NC_NGINX_IP }}"
+
+- name: Create nextcloud_db Container
+  docker_container:
+    name: "{{ NC_DB_NAME }}"
+    image: "{{ NC_DB_IMAGE }}"
+    restart_policy: "no"
+    networks:
+      - name: "{{ NC_NET_NAME }}"
+        ipv4_address: "{{ NC_DB_IP }}"
+    purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - nextcloud_db:/var/lib/postgresql/data
+    env:
+      POSTGRES_USER: "{{ NC_DB_USER }}"
+      POSTGRES_PASSWORD: "{{ NC_DB_PASSWORD }}"
+
+- name: Create nextcloud_app Container
+  docker_container:
+    name: "{{ NC_APP_NAME }}"
+    image: "{{ NC_APP_IMAGE }}"
+    restart_policy: "no"
+    #exposed_ports: "{{ NC_APP_PORT }}:80"
+    exposed_ports: "{{ NC_APP_PORT }}"
+    networks:
+      - name: "{{ NC_NET_NAME }}"
+        ipv4_address: "{{ NC_APP_IP }}"
+    purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - /mnt/data/nextcloud:/var/www/html/data
+      - nextcloud_app:/var/www/html
+    env:
+      POSTGRES_HOST: "{{ NC_DB_NAME }}"
+      POSTGRES_DB: "{{ NC_DB_POSTGRES_DB_NAME }}"
+      POSTGRES_USER: "{{ NC_DB_USER }}"
+      POSTGRES_PASSWORD: "{{ NC_DB_PASSWORD }}"
+      NEXTCLOUD_ADMIN_USER: "{{ NC_ADMIN_USER }}"
+      NEXTLOUD_ADMIN_PASSWORD: "{{ NC_ADMIN_PASSWORD }}"
+      NEXTCLOUD_TRUSTED_DOMAINS: "{{ NC_TRUSTED_DOMAINS }}"
+      SMTP_HOST: "{{ SMTP_HOST }}"
+      SMTP_SECURE: "{{ SMTP_SECURE }}"
+      SMTP_PORT: "{{ SMTP_PORT }}"
+      SMTP_NAME: "{{ SMTP_NAME }}"
+      SMTP_PASSWORD: "{{ SMTP_PASSWORD }}"
+      MAIL_FROM_ADDRESS: "{{ SMTP_FROM }}"
+
+- name: Create nextcloud_nginx Container
+  docker_container:
+    name: "{{ NC_NGINX_NAME }}"
+    image: "{{ NC_NGINX_IMAGE }}"
+    restart_policy: always
+    published_ports: "{{ NC_NGINX_PORT }}:443"
+    networks:
+      - name: "{{ NC_NET_NAME }}"
+        ipv4_address: "{{ NC_NGINX_IP }}"
+    purge_networks: yes
+    networks_cli_compatible: no
+    volumes:
+      - nextcloud_nginx:/etc/nginx
+      - /etc/letsencrypt:/etc/letsencrypt
+    env:
+      VIRTUAL_HOST: "{{ NC_FQDN }}"
+
+- name: Create sites-enabled Directory
+  file:
+    path: /var/lib/docker/volumes/nextcloud_nginx/_data/sites-enabled
+    state: directory
+
+- name: Copy Nextcloud config.php
+  template:
+    src: templates/config.php.j2
+    dest: /var/lib/docker/volumes/nextcloud_app/_data/config/config.php
+  register: nextcloud
+
+- name: Copy Nginx Config
+  synchronize:
+    src: templates/nginx.conf
+    dest: /var/lib/docker/volumes/nextcloud_nginx/_data/nginx.conf
+  register: nginx_config
+
+- name: Copy mime.types Config
+  synchronize:
+    src: templates/mime.types
+    dest: /var/lib/docker/volumes/nextcloud_nginx/_data/mime.types
+
+- name: Copy Nginx VHOST Config
+  template:
+    src: templates/nextcloud.conf.j2
+    dest: /var/lib/docker/volumes/nextcloud_nginx/_data/sites-enabled/nextcloud.conf
+  register: nginx_vhost
+
+- name: Restart nextcloud_app Container
+  docker_container:
+    name: "{{ NC_APP_NAME }}"
+    state: started
+    restart: yes
+  when: nextcloud.changed
+
+- name: Restart nextcloud_nginx Container
+  docker_container:
+    name: "{{ NC_NGINX_NAME }}"
+    state: started
+    restart: yes
+  when: nginx_vhost.changed
+...

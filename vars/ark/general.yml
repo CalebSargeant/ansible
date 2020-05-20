@@ -1,0 +1,13 @@
+### Ark Map Name List - https://ark.gamepedia.com/Server_Configuration
+# TheIsland
+# TheCenter
+# ScorchedEarth_P
+# Ragnarok
+# Aberration_P
+# Extinction
+# Valguero_P
+---
+ark_mods: 928102085,731604991,719928795,812655342,722649005,895711211,655261420,924933745,870709781,566885854,1102050924,756389708,793605978,587288100,805003358,924563988,821530042,774762563,1598654973,1590941323
+max_players: 10
+ark_admin_password: Changeme@123
+...

@@ -1,0 +1,8 @@
+---
+- hosts: switch
+  gather_facts: false
+  vars_files:
+  - vars/general/fh.yml
+  roles:
+    - cisco/switch-vacl
+...

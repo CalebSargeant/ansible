@@ -1,0 +1,10 @@
+---
+- hosts: scorchedearth
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars/ark/ark.yml
+  - vars/ark/ark-scorchedearth.yml
+  roles:
+    - ark/config
+...

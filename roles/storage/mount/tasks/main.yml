@@ -1,0 +1,7 @@
+## WORK IN PROGRESS ##
+#apt-get install cifs-utils
+
+#nano /etc/fstab
+#//{{ SERVER3_IP }}/data /mnt/server3 cifs credentials=/root/.smbcredentials,vers=1.0,iocharset=utf8,sec=ntlm 0 0
+
+#~/.smbcredentials

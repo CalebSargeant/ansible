@@ -1,0 +1,12 @@
+---
+- hosts: valguero
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars/general/fh.yml
+  - vars/pihole/general.yml
+  - vars/pihole/safesearch.yml
+  - vars/pihole/setupVars.yml
+  roles:
+    - pihole/install
+...

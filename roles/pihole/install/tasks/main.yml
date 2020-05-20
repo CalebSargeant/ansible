@@ -1,0 +1,16 @@
+---
+- name: Create /etc/pihole
+  file:
+    path: /etc/pihole
+    state: directory
+
+- name: Copy setupVars
+  template:
+    src: templates/setupVars.conf.j2
+    dest: /etc/pihole/setupVars.conf
+
+- name: Install PiHole
+  shell: curl -L {{ INSTALL_URL }} | bash /dev/stdin --unattended
+  args:
+    warn: no
+...

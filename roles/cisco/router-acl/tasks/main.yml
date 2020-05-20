@@ -1,0 +1,183 @@
+---
+#- name: Gather IOS Facts
+#  ios_facts:
+#    gather_subset: all
+
+- name: Download List of Uptime Robot IPs
+  get_url:
+    url: "https://uptimerobot.com/inc/files/ips/IPv4.txt"
+    dest: ~/repos/ansible/roles/cisco/router-acl/uptimerobot.txt
+  register: uptimerobot
+  delegate_to: 127.0.0.1
+
+- name: Download List of Cloudflare IPs
+  get_url:
+    url: "https://www.cloudflare.com/ips-v4"
+    dest: ~/repos/ansible/roles/cisco/router-acl/cloudflare.txt
+  register: cloudflare
+  delegate_to: 127.0.0.1
+
+- name: Download List of Plex IPs
+  get_url:
+    url: "https://s3-eu-west-1.amazonaws.com/plex-sidekiq-servers-list/sidekiqIPs.txt"
+    dest: ~/repos/ansible/roles/cisco/router-acl/plex.txt
+  register: plex
+  delegate_to: 127.0.0.1
+
+- name: Add List of Uptime Robot IPs to Variable
+  shell: "cat ~/repos/ansible/roles/cisco/router-acl/uptimerobot.txt"
+  when: uptimerobot.changed
+  register: uptimerobotips
+  delegate_to: 127.0.0.1
+
+- name: Add List of Cloudflare IPs to Variable
+  shell: cat ~/repos/ansible/roles/cisco/router-acl/cloudflare.txt | sed 's-/- /-g'
+  when: cloudflare.changed
+  register: cloudflareips
+  delegate_to: 127.0.0.1
+
+- name: Add List of Plex IPs to Variable
+  shell: cat ~/repos/ansible/roles/cisco/router-acl/plex.txt
+  when: plex.changed
+  register: plexips
+  delegate_to: 127.0.0.1
+
+- name: Disable Access-Group
+  ios_config:
+    backup: yes
+    lines:
+      - no ip access-group OUTSIDE_IN in
+    parents: interface {{ RTR_INT_INS }}
+    match: exact
+
+- name: Delete ACL OUTSIDE_IN
+  ios_config:
+    backup: yes
+    lines:
+      - no ip access-list extended OUTSIDE_IN
+    match: exact
+
+- name: Delete object-group network WHITELIST
+  ios_config:
+    lines:
+      - no object-group network WHITELIST
+    match: exact
+
+- name: Delete object-group network UPTIMEROBOT
+  ios_config:
+    lines:
+      - no object-group network UPTIMEROBOT
+    match: exact
+  when: uptimerobot.changed
+
+- name: Delete object-group network CLOUDFLARE
+  ios_config:
+    lines:
+      - no object-group network CLOUDFLARE
+    match: exact
+  when: cloudflare.changed
+
+- name: Delete object-group network PLEX
+  ios_config:
+    lines:
+      - no object-group network PLEX
+    match: exact
+  when: plex.changed
+
+- name: Config object-group network UPTIMEROBOT
+  ios_config:
+    lines:
+      - host {{ item }}
+    parents: object-group network UPTIMEROBOT
+    match: exact
+  when: uptimerobot.changed
+  with_items:
+    - "{{ uptimerobotips.stdout_lines }}"
+
+- name: Config object-group network CLOUDFLARE
+  ios_config:
+    lines:
+      - "{{ item }}"
+    parents: object-group network CLOUDFLARE
+    match: exact
+  when: cloudflare.changed
+  with_items:
+    - "{{ cloudflareips.stdout_lines }}"
+
+- name: Config object-group network PLEX
+  ios_config:
+    lines:
+      - "{{ item }}"
+    parents: object-group network PLEX
+    match: exact
+  when: plex.changed
+  with_items:
+    - "{{ plexips.stdout_lines }}"
+
+- name: Config object-group network CUSTOM
+  ios_config:
+    lines:
+      - host {{ WORK_IP_1 }}
+      - host {{ WORK_IP_2 }}
+      - host {{ WORK_IP_3 }}
+      - host {{ WORK_IP_4 }}
+      - host {{ WORK_IP_5 }}
+    parents: object-group network CUSTOM
+    before: no object-group network CUSTOM
+    match: exact
+
+- name: Config object-group network NATPORTS
+  ios_config:
+    backup: yes
+    lines:
+      - tcp eq 22
+      - tcp eq {{ SWITCH_PUB_PRT }}
+      - tcp eq {{ SERVER1_PUB_PRT }}
+      - tcp eq {{ SERVER2_PUB_PRT }}
+      - tcp eq {{ VOID6_PUB_PRT }}
+      - tcp eq {{ VOID7_PUB_PRT }}
+      - tcp eq {{ VOID8_PUB_PRT }}
+      - tcp eq {{ VOID13_PUB_PRT }}
+      - tcp eq {{ DVR1_PUB_PRT }}
+      - tcp eq {{ DVR2_PUB_PRT }}
+      - tcp eq {{ DVR3_PUB_PRT }}
+      - tcp eq {{ FIREFLY_PUB_SSH_PRT }}
+      - tcp eq {{ FIREFLY_PUB_HTTPS_PRT }}
+      - tcp eq {{ CALEBDESKTOP_PUB_PRT }}
+      - tcp eq {{ TRACEYDESKTOP_PUB_PRT }}
+      - tcp eq {{ PLEX_PUB_PRT }}
+      - tcp eq {{ MEDUSA_PUB_PRT }}
+    parents: object-group service NATPORTS
+    before: no object-group service NATPORTS
+    match: exact
+
+- name: Create object-group network WHITELIST
+  ios_config:
+    lines:
+      - group-object UPTIMEROBOT
+      - group-object CLOUDFLARE
+      - group-object PLEX
+      - group-object CUSTOM
+    parents: object-group network WHITELIST
+    #before: no object-group network WHITELIST
+    match: exact
+
+- name: Create ACL OUTSIDE_IN
+  ios_config:
+    backup: yes
+    lines:
+      - permit object-group NATPORTS object-group WHITELIST any log
+      - deny object-group NATPORTS any any log
+      - permit ip any any
+    parents: ip access-list extended OUTSIDE_IN
+    #before: no ip access-list extended OUTSIDE_IN
+    match: exact
+
+- name: Enable Access-Group
+  ios_config:
+    backup: yes
+    lines:
+      - ip access-group OUTSIDE_IN in
+    parents: interface {{ RTR_INT_INS }}
+    match: exact
+...

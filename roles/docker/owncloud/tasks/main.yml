@@ -1,0 +1,40 @@
+---
+- name: Make OwnCloud Directory
+  file:
+    path: /etc/docker/owncloud
+    state: directory
+
+#- name: Copy docker-compose.yml from the GitHub repository
+#  get_url:
+#    url: https://raw.githubusercontent.com/owncloud/docs/master/modules/admin_manual/examples/installation/docker/docker-compose.yml
+#    dest: /etc/docker/owncloud
+
+- name: Synchronize objects folder
+  synchronize:
+    src: templates/
+    dest: /etc/docker/owncloud/
+
+- name: Make owncloud_files Directory
+  file:
+    path: /mnt/data/owncloud_files
+    state: directory
+
+- name: Symlink OwnCloud Volume to /mnt/data
+  file:
+    src: /mnt/data/owncloud_files
+    dest: /var/lib/docker/volumes/owncloud_files
+    state: link
+
+# pip3 install docker-compose on the dest host
+- name: Docker Compose
+  docker_compose:
+    project_src: /etc/docker/owncloud
+  register: output
+
+- name: Crontab OwnCloud Refresh Directory
+  cron:
+    name: "owncloud dir refresh"
+    minute: "*/15"
+    #job: bash -c 'cd /etc/docker/owncloud && /usr/local/bin/docker-compose exec owncloud occ files:scan --all'
+    job: /usr/local/bin/docker-compose --project-directory /etc/docker/owncloud -f /etc/docker/owncloud/docker-compose.yml exec -T owncloud occ files:scan --all
+...

@@ -1,0 +1,35 @@
+server {
+    server_name {{ NC_FQDN }};
+    #server_name {{ NC_APP_IP }};
+    add_header Referrer-Policy "no-referrer";
+
+    location / {
+        proxy_pass http://{{ NC_APP_IP }}:{{ NC_APP_PORT }}/;
+        #proxy_pass http://{{ NC_APP_NAME }}:{{ NC_APP_PORT }}/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/{{ DOMAIN }}/privkey.pem; # managed by Certbot
+#    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+#    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    # If they come here using HTTP, bounce them to the correct scheme
+    #error_page 400 https://$host:$server_port$request_uri;
+    error_page 497 https://$host:{{ NC_NGINX_PORT }}$request_uri;
+}
+
+server {
+    if ($host = {{ NC_FQDN }}) {
+        return 301 https://$host:$server_port$request_uri;
+    } # managed by Certbot
+
+    listen 80;
+    server_name {{ NC_FQDN }};
+    return 404; # managed by Certbot
+}

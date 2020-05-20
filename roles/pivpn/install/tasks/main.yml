@@ -1,0 +1,20 @@
+---
+- name: Make PiVPN Directory
+  file:
+    path: /etc/pivpn
+    state: directory
+
+- name: Copy setupVars
+  template:
+    src: templates/setupVars.conf.j2
+    dest: /etc/pivpn/setupVars.conf
+
+# Note that Ubuntu 18 is not yet supported
+# See https://github.com/pivpn/pivpn/blob/master/auto_install/install.sh
+# If on Ubuntu (or other unsupported OS) you need to install manually with:
+# curl -L https://raw.githubusercontent.com/pivpn/pivpn/master/auto_install/install.sh | bash /dev/stdin --unattended
+- name: Install PiVPN
+  shell: curl -L {{ INSTALL_URL }} | bash /dev/stdin --unattended
+  args:
+    warn: no
+...

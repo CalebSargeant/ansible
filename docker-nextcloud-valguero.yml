@@ -1,0 +1,11 @@
+---
+- hosts: valguero
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars/docker/nextcloud.yml
+  #- vars/certbot/letsencrypt/cloudflare.yml
+  roles:
+    #- certs/letsencrypt
+    - docker/nextcloud
+...

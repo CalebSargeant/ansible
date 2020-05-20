@@ -1,0 +1,96 @@
+---
+- name: Create/Modify dnsmasq 05-restrict.conf
+  blockinfile:
+    path: /etc/dnsmasq.d/05-restrict.conf
+    create: yes
+    mode: '0644'
+    owner: root
+    group: root
+    block: "{{ lookup('file', 'templates/05-restrict.conf') }}"
+  register: config
+
+#- name: Create/Modify dnsmasq 10-fh.conf
+#  blockinfile:
+#    path: /etc/dnsmasq.d/10-fh.conf
+#    create: yes
+#    mode: '0644'
+#    owner: root
+#    group: root
+#    block: "{{ lookup('file', 'templates/10-fh.conf') }}"
+#  register: config
+
+- name: Create/Modify dnsmasq 10-fh.conf
+  template:
+    src: templates/10-fh.conf.j2
+    dest: /etc/dnsmasq.d/10-fh.conf
+  register: config
+
+- name: Download Official List of Google Domains
+  get_url:
+    url: "https://www.google.com/supported_domains"
+    dest: ~/google-domains
+  register: google
+
+- name: Add List of Google Domains to Variable
+  shell: "cat ~/google-domains | cut -c 2-"
+  when: google.changed
+  register: domains
+
+- name: Create Google CNAME records to force safe search
+  lineinfile:
+    path: /etc/dnsmasq.d/05-restrict.conf
+    line: "cname={{ item }},www.{{ item }},forcesafesearch.google.com"
+    create: yes
+  with_items:
+    - "{{ domains.stdout_lines }}"
+  when: google.changed
+
+- name: Ensure Blacklist exists
+  file:
+    path: /etc/pihole/blacklist.txt
+    state: touch
+
+- name: Updating Blacklist - Exact blocking
+  blockinfile:
+    path: /etc/pihole/blacklist.txt
+    block: "{{ lookup('file', 'templates/blacklist.txt') }}"
+
+- name: Updating Blacklist - Regex & Wildcard blocking
+  blockinfile:
+    path: /etc/pihole/regex.list
+    block: "{{ lookup('file', 'templates/regex.list') }}"
+
+- name: Ensure Whitelist exists
+  file:
+    path: /etc/pihole/whitelist.txt
+    state: touch
+
+- name: Updating Whitelist
+  blockinfile:
+    path: /etc/pihole/whitelist.txt
+    block: "{{ lookup('file', 'templates/whitelist.txt') }}"
+
+- name: Updating Blocklists
+  blockinfile:
+    path: /etc/pihole/adlists.list
+    block: "{{ lookup('file', 'templates/adlists.list') }}"
+  register: adlist
+
+- name: Update Gravity
+  command: "pihole -g"
+  when: adlist.changed
+  register: gravity
+
+- debug:
+    var: gravity
+  when: gravity.changed
+
+- name: Restart Pi-hole subsystems
+  command: "pihole restartdns"
+  when: google.changed or config.changed
+  register: restartdns
+
+- debug:
+    var: restartdns
+  when: restartdns.changed
+...

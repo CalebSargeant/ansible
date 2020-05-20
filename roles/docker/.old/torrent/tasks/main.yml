@@ -1,0 +1,34 @@
+---
+- name: Create Docker Network
+  docker_network:
+    name: "{{ TORRENT_NET_NAME }}"
+    ipam_config:
+      - subnet: "{{ TORRENT_NET_SUBNET }}"
+        gateway: "{{ TORRENT_NET_GW }}"
+        iprange: "{{ TORRENT_NET_RANGE }}"
+
+#- name: Nginx
+#  include: nginx.yml
+
+#- name: Jackett
+#  include: jackett.yml
+
+#- name: Radarr
+#  include: radarr.yml
+
+#- name: Medusa
+#  include: medusa.yml
+
+- name: Deluge
+  include: deluge.yml
+
+- name: Plex
+  include: plex.yml
+
+#- name: Restart Nginx Container
+#  docker_container:
+#    name: "{{ TORRENT_NGINX_NAME }}"
+#    state: started
+#    restart: yes
+#  when: nginx_config.changed
+...

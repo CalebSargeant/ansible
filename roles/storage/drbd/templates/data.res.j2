@@ -1,0 +1,20 @@
+{% raw %}
+resource data {
+  on valguero {
+    device    /dev/drbd1;
+    disk      /dev/zd0;
+{% endraw %}
+    address   {{ SERVER1_IP }}:7789;
+{% raw %}
+    meta-disk internal;
+  }
+  on scorchedearth {
+    device    /dev/drbd1;
+    disk      /dev/zd0;
+{% endraw %}
+    address   {{ SERVER2_IP }}:7789;
+{% raw %}
+    meta-disk internal;
+  }
+}
+{% endraw %}

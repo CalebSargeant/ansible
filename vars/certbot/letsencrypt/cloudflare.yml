@@ -1,0 +1,4 @@
+# Cloudflare API credentials used by Certbot
+CF_EMAIL: changeme@example.com
+CF_TOKEN: changeme
+CF_DOMAIN: example.com
