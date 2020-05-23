@@ -1,0 +1,21 @@
+---
+- name: REGION1 - Configure logging
+  ios_config:
+    backup: yes
+    lines:
+      - logging trap debugging
+      - logging {{ REGION1_SYSLOG_SERVER_IP }}
+      - logging origin-id hostname
+    save_when: modified
+  when: ansible_hostname is search("region1")
+
+- name: REGION2 - Configure logging
+  ios_config:
+    backup: yes
+    lines:
+      - logging trap debugging
+      - logging {{ REGION2_SYSLOG_SERVER_IP }}
+      - logging origin-id hostname
+    save_when: modified
+  when: ansible_hostname is search("region2")
+...
