@@ -1,0 +1,88 @@
+---
+# Version History: https://duo.com/docs/authproxy-notes
+- name: Set Version Facts
+  set_fact:
+     desired_version: "3.2.1"
+
+- name: Get Current Version
+  shell: "script -c '( /opt/duoauthproxy/bin/authproxyctl version > $(tty) ) &>/dev/stdout' | grep -o '[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}'"
+  register: current_version
+  ignore_errors: True
+
+#- debug:
+#    var: current_version.stdout
+
+- name: Install Packages
+  apt:
+    name: "{{ packages }}"
+    force_apt_get: yes
+  vars:
+    packages:
+    - build-essential
+    - python-dev
+    - libffi-dev
+    - perl
+    - zlib1g-dev
+
+- name: Create /tmp/duoauthproxy
+  file:
+    path: /tmp/duoauthproxy
+    state: directory
+
+- name: Download & Extract DuoAuthProxy
+  unarchive:
+    src: https://dl.duosecurity.com/duoauthproxy-{{ desired_version }}-src.tgz
+    dest: /tmp/duoauthproxy
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+  when: desired_version > current_version.stdout
+
+- name: Make DuoAuthProxy
+  make:
+    chdir: /tmp/duoauthproxy
+  when: desired_version > current_version.stdout
+
+- name: Install DuoAuthProxy
+  command: ./install --install-dir /opt/duoauthproxy --service-user duo_authproxy_svc --log-group duo_authproxy_grp --create-init-script yes
+  args:
+    chdir: /tmp/duoauthproxy/duoauthproxy-build
+  when: desired_version > current_version.stdout
+
+- name: server2 - Decide Order of AD
+  set_fact:
+    AD_SERVER_IP1: {{ SERVER2_IP }}
+    AD_SERVER_IP2: {{ SERVER1_IP }}
+    AD_SERVER_IP3: {{ SERVER3_IP }}
+  when: ansible_hostname is search("server2")
+
+- name: server1 - Decide Order of AD
+  set_fact:
+    AD_SERVER_IP1: {{ SERVER1_IP }}
+    AD_SERVER_IP2: {{ SERVER2_IP }}
+    AD_SERVER_IP3: {{ SERVER3_IP }}
+  when: ansible_hostname is search("server1")
+
+- name: server3 - Decide Order of AD
+  set_fact:
+    AD_SERVER_IP1: {{ SERVER3_IP }}
+    AD_SERVER_IP2: {{ SERVER2_IP }}
+    AD_SERVER_IP3: {{ SERVER1_IP }}
+  when: ansible_hostname is search("server3")
+
+- name: Copy Templated Config
+  template:
+    src: templates/authproxy.cfg.j2
+    dest: /opt/duoauthproxy/conf/authproxy.cfg
+  register: duoconfig
+
+- name: Restart duoauthproxy
+  service:
+    name: duoauthproxy
+    state: restarted
+  when: duoconfig.changed
+
+- name: Delete /tmp/duoauthproxy
+  file:
+    path: /tmp/duoauthproxy
+    state: absent
+...

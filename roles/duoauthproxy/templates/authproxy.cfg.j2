@@ -1,0 +1,37 @@
+## CLOUD SECTION
+[cloud]
+ikey={{ CLOUD_IKEY }}
+skey={{ CLOUD_SKEY }}
+api_host={{ API_HOST }}
+service_account_username={{ BIND_USER }}
+service_account_password={{ BIND_PASS }}
+
+## CLIENT SECTION
+[ad_client]
+host={{ AD_SERVER_IP1 }}
+host_2={{ AD_SERVER_IP2 }}
+host_3={{ AD_SERVER_IP3 }}
+service_account_username={{ BIND_USER }}
+service_account_password={{ BIND_PASS }}
+search_dn={{ SEARCH_DN }}
+
+## SERVER SECTION
+# AnyConnect VPN
+[radius_server_auto1]
+ikey={{ ANYC_IKEY }}
+skey={{ ANYC_SKEY }}
+api_host={{ API_HOST }}
+client={{ ANYC_CLIENT }}
+port={{ ANYC_PORT }}
+radius_ip_1={{ DEVICE1_IP }}
+radius_secret_1={{ DEVICE1_RADIUS_SECRET }}
+
+# Network Device Management Access
+[radius_server_auto2]
+ikey={{ NDMA_IKEY }}
+skey={{ NDMA_SKEY }}
+api_host={{ API_HOST }}
+client={{ NDMA_CLIENT }}
+port={{ NDMA_PORT }}
+radius_ip_1={{ DEVICE1_IP }}
+radius_secret_1={{ DEVICE1_RADIUS_SECRET }}
