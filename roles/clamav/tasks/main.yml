@@ -1,0 +1,29 @@
+---
+- name: Install Packages
+  apt:
+    name: "{{ packages }}"
+    force_apt_get: yes
+  vars:
+    packages:
+    - clamav
+
+- name: Schedule Daily Updates
+  cron:
+    name: "ClamAV Daily Update"
+    minute: "0"
+    hour: "3"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/bin/systemctl stop clamav-freshclam && /usr/bin/freshclam | mail -s \"ClamAV Daily Update\" -a \"From: $(/bin/hostname)@calebsargeant.com\" \"contact@calebsargeant.com, contact2@calebsargeant.com\" && /bin/systemctl start clamav-freshclam"
+
+- name: Schedule Daily Scan
+  cron:
+    name: "ClamAV Daily Scan"
+    minute: "0"
+    hour: "4"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/usr/bin/nice -n 19 /usr/bin/clamscan --max-filesize=3999M --max-scansize=3999M --exclude-dir=/sys/* -i -r / | mail -s \"ClamAV Daily Scan\" -a \"From: $(/bin/hostname)@calebsargeant.com\" \"contact@calebsargeant.com, contact2@calebsargeant.com\""
+...
