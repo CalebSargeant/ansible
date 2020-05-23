@@ -1,0 +1,35 @@
+---
+- name: Show Current State of Inside-Split-ACL
+  asa_command:
+    commands:
+      - show run access-list Inside-Split-ACL
+  register: inside_gather_current
+
+- name: Bash output
+  shell: echo "{{ inside_gather_current.stdout }}" | tr -d '["u"],' | awk '{gsub(/\\n/,"\n")}1' | sed 's/ *$//' | sed "s/'//"
+  delegate_to: localhost
+  register: inside_current
+
+- name: expected
+  shell: roles/asa/split-tunnel/ingest.sh inside
+  register: inside_expected
+  delegate_to: localhost
+
+#- name: bash output 2
+#  shell: echo "{{ inside_gather_expected.stdout }}" | tr -d '[""],' | sed 's/ *$//'
+#  register: inside_expected
+#  delegate_to: localhost
+
+- name: Gather Commands
+  shell: echo "{{ inside_expected.stdout }}" | grep -xv "{{ inside_current.stdout }}"
+  delegate_to: localhost
+  register: inside_commands
+
+
+
+- debug:
+    var: inside_current.stdout_lines
+
+- debug:
+    var: inside_commands.stdout_lines
+...

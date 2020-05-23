@@ -1,0 +1,189 @@
+---
+- name: Ingest Expected State
+  shell: for i in inside outside; do roles/asa/split-tunnel/ingest.sh "$i" > roles/asa/split-tunnel/expected_$i.txt; done
+  delegate_to: 127.0.0.1
+
+- name: INSIDE - Generate Command List
+  shell: grep -xvf roles/asa/split-tunnel/current_inside.txt roles/asa/split-tunnel/expected_inside.txt
+  delegate_to: 127.0.0.1
+  register: inside_commands
+  failed_when: inside_commands.rc != 1 and inside_commands.rc != 0
+
+- name: OUTSIDE - Generate Command List
+  shell: grep -xvf roles/asa/split-tunnel/current_outside.txt roles/asa/split-tunnel/expected_outside.txt
+  delegate_to: 127.0.0.1
+  register: outside_commands
+  failed_when: outside_commands.rc != 1 and outside_commands.rc != 0
+
+- name: INSIDE - Config Split-Tunnel
+  asa_config:
+    lines:
+      - "{{ item }}"
+  with_items:
+    - "{{ inside_commands.stdout_lines }}"
+  register: inside_asa_config
+  when: inside_commands.stdout_lines != ""
+  ignore_errors: true
+
+- name: OUTSIDE - Config Split-Tunnel
+  asa_config:
+    lines:
+      - "{{ item }}"
+  with_items:
+    - "{{ outside_commands.stdout_lines }}"
+  register: outside_asa_config
+  when: outside_commands.stdout_lines != ""
+  ignore_errors: true
+
+- name: INSIDE - Move Expected State to Current State
+  command: mv roles/asa/split-tunnel/expected_inside.txt roles/asa/split-tunnel/current_inside.txt
+  delegate_to: 127.0.0.1
+  register: inside_move
+  when: inside_asa_config.changed
+
+- name: OUTSIDE - Move Expected State to Current State
+  command: mv roles/asa/split-tunnel/expected_outside.txt roles/asa/split-tunnel/current_outside.txt
+  delegate_to: 127.0.0.1
+  register: outside_move
+  when: outside_asa_config.changed
+
+- name: INSIDE - Delete Expected State if no Change
+  file:
+    path: roles/asa/split-tunnel/expected_inside.txt
+    state: absent
+  when: inside_move is skipped
+
+- name: OUTSIDE - Delete Expected State if no Change
+  file:
+    path: roles/asa/split-tunnel/expected_outside.txt
+    state: absent
+  when: outside_move is skipped
+
+- name: Show Current State of Inside-Split-ACL
+  asa_command:
+    commands:
+      - show run access-list Inside-Split-ACL
+  register: current_inside
+
+- debug:
+    var: current_inside.stdout_lines
+
+- local_action:
+    module: copy
+    content: "{{ current_inside.stdout|list }}"
+    dest: roles/asa/split-tunnel/test.txt
+...
+
+
+### "All lines/commands must begin with \"access-list\" no is not permitted"
+#- name: Config Inside Split-Tunnel
+#  asa_acl:
+#    lines:
+#      - "{{ item }}"
+#    match: line
+#    replace: line
+#  with_items:
+#    - "{{ inside_commands.stdout_lines }}"
+#  when: inside_commands.stdout_lines != ""
+
+### You can grab the running config of the ACL, but it contains spaces & last line contains no space
+### Comparing this stdout to expected_state is therefore too complex, unless we dump the output
+### of current_inside to a file, and remove the space. However, using blockinfil or shell with cat
+### shows the data in an unreadable format (something wrong with asa_command module)
+#- name: Show Current State of Inside-Split-ACL
+#  asa_command:
+#    commands:
+#      - show run access-list Inside-Split-ACL
+#  register: current_inside
+
+#- debug:
+#    var: current_inside.stdout_lines
+
+#- name: Create current_inside.txt
+##  shell: "echo {{ item }} > roles/asa/split-tunnel/current_inside.txt"
+#  with_items:
+#    - "{{ current_inside.stdout_lines }}"
+#  delegate_to: 127.0.0.1
+
+#- name: Create current_inside.txt
+#  blockinfile:
+#    create: yes
+#    path: roles/asa/split-tunnel/current_inside.txt
+#    block: "{{ current_inside.stdout_lines }}"
+#  delegate_to: 127.0.0.1
+
+#- name: Check Current State of Inside-Split-ACL
+#  shell: cat roles/asa/split-tunnel/current_inside.txt
+#  register: current_inside
+#  delegate_to: 127.0.0.1
+
+#- name: Ingest Inside Expected State
+#  shell: roles/asa/split-tunnel/ingest.sh inside "access-list Inside-Split-ACL standard permit" | tee roles/asa/split-tunnel/new_inside.txt
+#  register: expected_inside
+#  delegate_to: 127.0.0.1
+
+
+
+#- debug:
+#    var: expected_inside.stdout_lines
+
+#    - shell: ps -eo pcpu,user,args | sort -r -k1 | head -n5
+#      register: ps
+
+#    - debug: var=ps.stdout_lines
+
+
+
+#- name: Check New State of Inside-Split-ACL
+#  shell: cat roles/asa/split-tunnel/inside.txt
+#  register: inside
+#  delegate_to: 127.0.0.1
+
+#- name: Config Inside Split-Tunnel
+#  asa_acl:
+#    lines:
+#      - "{{ item }}"
+#    match: line
+#    replace: line
+#  with_items:
+#    - "{{ lookup('file', '../inside.txt').splitlines() }}"
+    #-
+#  when: current_inside.stdout_lines != expected_inside.stdout_lines
+
+#- name: Config Outside Split-Tunnel
+#  asa_acl:
+#    lines:
+#      - access-list Inside-Split-ACL standard permit {{ item }}
+#    match: line
+#    replace: line
+#  with_items:
+#    - "{{ lookup('file', '../outside.txt').splitlines() }}"
+
+#- name: Config Both Split-Tunnels
+#  asa_acl:
+#    lines:
+#      - access-list Inside-Split-ACL standard permit {{ item }}
+#    match: line
+#    replace: line
+#  with_items:
+#    - "{{ lookup('file', '../both.txt').splitlines() }}"
+
+#- name: Move New To Current
+#  shell: mv inside.txt
+
+#- name: Add List of Inside-Split-ACL Networks to Variable
+#  shell: DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" && cat "$DIR/roles/asa/split-tunnel/inside.txt"
+  #when: inside-expected_state.changed
+#  register: inside
+#  delegate_to: 127.0.0.1
+
+#- name: Config Inside Split-Tunnel
+#  asa_acl:
+#    lines:
+#      - access-list Inside-Split-ACL standard permit {{ item }}
+#    match: line
+#    replace: line
+#   provider: "{{ cli }}"
+#  when: inside-expected_state.changed
+#  with_items:
+#    - "{{ inside.stdout_lines }}"
