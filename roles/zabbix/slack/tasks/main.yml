@@ -1,0 +1,10 @@
+---
+- name: Copy slackalerts.sh
+  template:
+    src: templates/slackalerts.sh.j2
+    dest: /usr/lib/zabbix/alertscripts/slackalerts.sh
+    owner: zabbix
+    group: zabbix
+    mode: '0744'
+    backup: yes
+...

@@ -1,0 +1,22 @@
+---
+- name: Install Zabbix-Agent
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - zabbix-agent
+
+- name: Copy zabbix_agentd.conf
+  template:
+    src: templates/zabbix_agentd.conf.j2
+    dest: /etc/zabbix/zabbix_agentd.conf
+  register: zabbix_agentd
+
+- name: Restart Zabbix-Agent Service
+  systemd:
+    state: restarted
+    name: zabbix-agent
+  when: zabbix_agentd.changed
+...

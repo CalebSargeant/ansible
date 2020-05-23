@@ -1,0 +1,100 @@
+---
+- name: Download & Install Zabbix Deb Repo
+  apt:
+    deb: "{{ ZABBIX_DEB_URL_V4 }}"
+
+- name: Install Required Packages
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    force_apt_get: yes
+  vars:
+    packages:
+    - zabbix-server-mysql
+    - zabbix-frontend-php
+    - zabbix-agent
+    - snmp
+    - snmptt
+    - python3-pip
+    - php-mysql
+
+- name: Install MySQL via pip
+  pip:
+    name: pymysql
+    state: present
+
+- name: Apt Update & Upgrade
+  apt:
+    upgrade: "yes"
+    update_cache: yes
+    force_apt_get: yes
+
+- name: Copy apache.conf
+  template:
+    src: templates/apache.conf.j2
+    dest: /etc/zabbix/apache.conf
+
+- name: Update MySQL Root Password
+  mysql_user:
+    login_user: root
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    name: root
+    host: "{{ item }}"
+    password: "{{ MYSQL_ROOT_PASSWORD }}"
+    priv: "*.*:ALL,GRANT"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  with_items:
+    - "{{ REMOTE_HOST_NAME }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: Create Zabbix Database
+  mysql_db:
+    login_user: root
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    name: "{{ ZABBIX_DB_NAME }}"
+    encoding: utf8
+    collation: utf8_bin
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+- name: Create Zabbix DB User
+  mysql_user:
+    login_user: root
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    user: "{{ ZABBIX_DB_USER }}"
+    password: "{{ ZABBIX_DB_PASSWORD }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+    priv: 'zabbix.*:ALL'
+
+# Disable this if it complains that it has been installed already - this is for first installs only
+- name: Import Zabbix Data into DB
+  raw: cd '/usr/share/doc/zabbix-server-mysql' && zcat create.sql.gz | mysql zabbix -u zabbix -p'{{ ZABBIX_DB_PASSWORD }}'
+
+- name: Copy zabbix_server.conf
+  template:
+    src: templates/zabbix_server.conf.j2
+    dest: /etc/zabbix/zabbix_server.conf
+
+- name: Copy zabbix_agentd.conf
+  template:
+    src: templates/zabbix_agentd.conf.j2
+    dest: /etc/zabbix/zabbix_agentd.conf
+
+- name: Config /etc/zabbix/web/zabbix.conf.php.j2
+  template:
+    src: templates/zabbix.conf.php.j2
+    dest: /etc/zabbix/web/zabbix.conf.php
+
+- name: Restart and Enable Services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - zabbix-server
+    - zabbix-agent
+    - apache2
+...
