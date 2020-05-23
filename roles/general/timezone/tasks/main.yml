@@ -1,0 +1,5 @@
+---
+- name: Timezone
+  timezone:
+    name: Africa/Johannesburg
+...

@@ -1,0 +1,8 @@
+- name: Copy sources.list
+  copy:
+    src: templates/sources.list
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes

@@ -1,0 +1,11 @@
+---
+- name: Terminal Colours
+  copy:
+    src: /etc/skel/.bashrc
+    dest: /root/.bashrc
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    remote_src: yes
+...

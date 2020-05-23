@@ -1,0 +1,8 @@
+---
+- name: Add mappings to /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ ansible_default_ipv4.address }} {{ ansible_hostname }}.calebsargeant.com {{ ansible_hostname }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ ansible_hostname }}"
+...
