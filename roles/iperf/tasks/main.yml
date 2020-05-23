@@ -1,0 +1,24 @@
+---
+- name: Install Packages
+  apt:
+    name: "{{ packages }}"
+    force_apt_get: yes
+  vars:
+    packages:
+    - iperf3
+    - iperf
+
+- name: Create iperf Systemd Service
+  copy:
+    src: templates/iperf.service
+    dest: /etc/systemd/system/iperf.service
+    backup: yes
+
+- name: Start iperf Service
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - iperf
+...
