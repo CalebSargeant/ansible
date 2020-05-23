@@ -1,0 +1,15 @@
+---
+- name: Modify rsyslog.conf
+  blockinfile:
+    dest: "/etc/rsyslog.conf"
+    backup: yes
+    block: |
+      *.*     @log1.calebsargeant.com:12202;RSYSLOG_SyslogProtocol23Format
+      *.*     @log2.calebsargeant.com:12202;RSYSLOG_SyslogProtocol23Format
+      *.*     @log3.calebsargeant.com:12202;RSYSLOG_SyslogProtocol23Format
+
+- name: Restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+...

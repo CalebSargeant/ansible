@@ -1,0 +1,14 @@
+---
+- name: Download CEF Installer
+  get_url:
+    url: "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_installer.py"
+    dest: ~/cef_installer.py
+
+- name: REGION1 - Execute CEF Installer
+  command: python ~/cef_installer.py {{ REGION1_CEF_INSTALLER_ARG }}
+  when: ansible_hostname is search("REGION1")
+
+- name: REGION2 - Execute CEF Installer
+  command: python ~/cef_installer.py {{ REGION2_CEF_INSTALLER_ARG }}
+  when: ansible_hostname is search("REGION2")
+...
