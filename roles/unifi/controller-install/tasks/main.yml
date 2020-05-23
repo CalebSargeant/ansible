@@ -1,0 +1,21 @@
+---
+- name: Install Packages
+  apt:
+    name: "{{ packages }}"
+    force_apt_get: yes
+  vars:
+    packages:
+    - ca-certificates
+    - wget
+
+- name: Download UniFi Installation Script
+  get_url:
+    url: "{{ UNIFI_INSTALL_URL }}"
+    dest: /home/ubuntu/unifi-latest.sh
+    mode: u+x
+
+- name: Run UniFi Installation Script
+  command: ./unifi-latest.sh -skip
+  args:
+    chdir: /home/ubuntu
+...

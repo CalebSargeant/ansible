@@ -1,0 +1,12 @@
+---
+# I THINK THIS DOES NOT WORK, you have to scp the file to the AP - see AP-UPGRADE-SCP. This role must be deleted to avoid confusion.
+# Might be the other way round need to test...
+
+- name: Upgrade AP
+  raw: mca-cli-op upgrade {{ UPGRADE_URL }}
+#  register: output
+
+#- debug:
+#    var: output
+#  when: output.changed
+...

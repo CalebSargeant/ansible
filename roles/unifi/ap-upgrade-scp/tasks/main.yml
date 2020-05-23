@@ -1,0 +1,14 @@
+---
+#- name: local scp
+#  local_action: command scp -i ~/.ssh/mykey ~/Downloads/BZ.qca956x.v4.0.66.10832.191023.1949.bin username@{{ inventory_hostname }}:/tmp/fwupdate.bin
+
+
+#- name: Copy Firmware to AP
+#  copy:
+#    src: ~/Downloads/BZ.qca956x.v4.0.66.10832.191023.1949.bin
+#    dest: /tmp/fwupdate.bin
+
+# syswrapper.sh upgrade2 & don't forget the & sign when manually inputting command to AP, otherwise will have to physically reboot
+- name: Upgrade AP
+  raw: syswrapper.sh upgrade2 &
+...
