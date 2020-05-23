@@ -1,0 +1,160 @@
+---
+# http://deployingradius.com/documents/configuration/active_directory.html
+- name: Install Packages
+  apt:
+    name: "{{ packages }}"
+    force_apt_get: yes
+  vars:
+    packages:
+    - freeradius
+    - winbind
+    - samba
+    - realmd
+
+- name: FreeRADIUS - clients Config
+  template:
+    src: templates/clients.conf.j2
+    dest: /etc/freeradius/3.0/clients.conf
+    backup: yes
+  register: freeradius_config
+
+# Enable ntlm_auth under "authenticate {"
+- name: FreeRADIUS - default Site Config
+  copy:
+    src: templates/default
+    dest: /etc/freeradius/3.0/sites-available/default
+    backup: yes
+  register: freeradius_config
+
+# Enable ntlm_auth under "authenticate {"
+- name: FreeRADIUS - inner-tunnel Site Config
+  copy:
+    src: templates/inner-tunnel
+    dest: /etc/freeradius/3.0/sites-available/inner-tunnel
+    backup: yes
+  register: freeradius_config
+
+# Set default_eap_type = peap
+- name: FreeRADIUS - eap Mod Config
+  copy:
+    src: templates/eap
+    dest: /etc/freeradius/3.0/mods-available/eap
+    backup: yes
+  register: freeradius_config
+
+# Symlink mods-available/eap to mods-enabled/eap
+- name: FreeRADIUS - Enable eap Mod
+  file:
+    src: ../mods-available/eap
+    dest: /etc/freeradius/3.0/mods-enabled/eap
+    state: link
+    owner: freerad
+  register: freeradius_config
+
+# Uncomment & change "ntlm_auth ="
+- name: FreeRADIUS - mschap Mod Config
+  copy:
+    src: templates/mschap
+    dest: /etc/freeradius/3.0/mods-available/mschap
+    backup: yes
+  register: freeradius_config
+
+# Set program location & change domain
+- name: FreeRADIUS - ntlm_auth Mod Config
+  copy:
+    src: templates/ntlm_auth
+    dest: /etc/freeradius/3.0/mods-available/ntlm_auth
+    backup: yes
+  register: freeradius_config
+
+- name: server2 - Set server_sequence variable
+  set_fact:
+     server_sequence: "server2.calebsargeant.com, server1.calebsargeant.com, server3.calebsargeant.com"
+  when: ansible_hostname is search("server2")
+
+- name: server1 - Set server_sequence variable
+  set_fact:
+     server_sequence: "server1.calebsargeant.com, server2.calebsargeant.com, server3.calebsargeant.com"
+  when: ansible_hostname is search("server1")
+
+- name: server3 - Set server_sequence variable
+  set_fact:
+     server_sequence: "server3.calebsargeant.com, server2.calebsargeant.com, server1.calebsargeant.com"
+  when: ansible_hostname is search("server3")
+
+# https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#PASSWORDSERVER to manually set the auth servers
+# Set "workgroup = CHANGEME", add "security =", add "password server =", add "realm ="
+- name: Samba Config
+  template:
+    src: templates/smb.conf.j2
+    dest: /etc/samba/smb.conf
+    backup: yes
+  register: smb_config
+
+- name: Clear Network Cache
+  command: "net cache flush"
+  when: smb_config.changed
+
+# To prevent "MS-CHAP-Error = "\000E=691 R=1 C=924941407bc6777e V=2""
+- name: Add user freerad to group winbindd_priv
+  user:
+    name: freerad
+    groups: winbindd_priv
+    append: yes
+  register: winbind_priv
+
+- name: Restart Services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - winbind
+    - smbd
+  when: smb_config.changed or winbind_priv.changed
+
+- name: Copy Wildcard Certificate
+  copy:
+    src: templates/wildcard.calebsargeant.com.crt
+    dest: /etc/ssl/certs/wildcard.calebsargeant.com.crt
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  register: freeradius_config
+
+- name: Copy Wildcard Key
+  copy:
+    src: templates/wildcard.calebsargeant.com.key
+    dest: /etc/ssl/private/wildcard.calebsargeant.com.key
+    owner: root
+    group: ssl-cert
+    mode: '0640'
+    backup: yes
+  register: freeradius_config
+
+# Symlink sites-available/status to sites-enabled/status to allow for Zabbix monitoring
+- name: FreeRADIUS - Enable status Site
+  file:
+    src: ../sites-available/status
+    dest: /etc/freeradius/3.0/sites-enabled/status
+    state: link
+    owner: freerad
+  register: freeradius_config
+
+# Restart services to acknowledge new config
+- name: Restart Services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - freeradius
+  when: freeradius_config.changed
+#    - winbind
+    #- smbd
+
+### STILL TO DO - MUST TO MANUALLY FOR NOW AFTER PLAYBOOK RUNS (unless already joined)!!!
+### sudo net join -U name.surname%%mypassword
+### sudo service winbind restart
+...
