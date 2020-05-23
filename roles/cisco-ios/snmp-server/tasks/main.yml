@@ -1,0 +1,9 @@
+---
+- name: Configure SNMPv2
+  ios_config:
+    backup: yes
+    lines:
+      - snmp-server community {{ snmp_community }} ro
+      - snmp-server location {{ location }}
+    save_when: changed
+...
