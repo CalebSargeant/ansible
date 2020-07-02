@@ -1,0 +1,10 @@
+---
+- name: GNS3-SERVER container
+  docker_container:
+    name: "{{ GNS3_SERVER_NAME }}"
+    image: "{{ GNS3_SERVER_IMAGE }}"
+    restart_policy: "no"
+    network_mode: host
+    volumes:
+      - "{{ GNS3_SERVER_NAME }}:/data"
+...

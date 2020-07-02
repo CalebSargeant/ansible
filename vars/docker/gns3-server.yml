@@ -1,0 +1,4 @@
+---
+GNS3_SERVER_NAME: gns3-server
+GNS3_SERVER_IMAGE: jsimonetti/gns3-server:latest
+...
