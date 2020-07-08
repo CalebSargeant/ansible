@@ -1,0 +1,13 @@
+---
+### GLOBAL COPY-FROM-S3 VARIABLES
+PROTOCOL: https
+ASA_FS: disk0
+
+### FILENAME VARIABLES
+ASDM: asdm-792-152.bin
+ANYC_LIN: anyconnect-linux64-4.8.02042-webdeploy-k9.zip
+ANYC_WIN: anyconnect-win-4.8.02042-webdeploy-k9.zip
+ANYC_MAC: anyconnect-macos-4.8.02042-webdeploy-k9.zip
+DAP_PROFILE: dap.xml
+ANYC_PROFILE: anyconnect-profile.xml
+...

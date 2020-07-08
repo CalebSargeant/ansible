@@ -1,0 +1,16 @@
+---
+- name: "Copy Files from S3"
+  asa_command:
+    commands:
+      - "copy /noconfirm {{ PROTOCOL }}://{{ S3_HOST }}/{{ item }} {{ ASA_FS }}:/{{ item }}"
+    wait_for:
+      - result[0] contains copied
+    #timeout: 60
+  loop:
+    - "{{ ASDM }}"
+    - "{{ ANYC_LIN }}"
+    - "{{ ANYC_WIN }}"
+    - "{{ ANYC_MAC }}"
+    - "{{ DAP_PROFILE }}"
+    - "{{ ANYC_PROFILE }}"
+...
