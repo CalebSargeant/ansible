@@ -1,0 +1,82 @@
+---
+- name: Firefly Cron - Recurring Transactions
+  cron:
+    name: "Firefly Recurring Transactions"
+    minute: "45"
+    hour: "4"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/usr/bin/docker exec firefly_iii_app php /var/www/firefly-iii/artisan firefly:cron | mail -s \"[Cron] Firefly III - Recurring Transactions\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
+
+- name: Firefly Cron - Backups
+  cron:
+    name: "Firefly Backups"
+    minute: "50"
+    hour: "4"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/bin/bash -c 'for CONTAINER in firefly_iii_upload firefly_iii_export firefly_iii_nginx firefly_iii_db; do /usr/bin/docker run --rm -v \"$CONTAINER:/tmp/$CONTAINER\" -v \"/mnt/data/Backups/Firefly:/backup\" ubuntu tar -czvf \"/backup/`date +\\%C\\%y\\%m\\%d`-$CONTAINER.tar\" -C / \"tmp/$CONTAINER/\"; done > /tmp/firefly-backup.log && ls -hal /mnt/data/Backups/Firefly | grep `date +\\%C\\%y\\%m\\%d` && cat /tmp/firefly-backup.log' | mail -s \"[Cron] Firefly III - Backups\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
+
+- name: Copy .env file for fireflyiii
+  template:
+    src: templates/.env.j2
+    dest: /tmp/.env
+
+- name: Create Docker Network
+  docker_network:
+    name: "{{ FFNET_NAME }}"
+    ipam_config:
+      - subnet: "{{ FFNET_SUBNET }}"
+        gateway: "{{ FFNET_GW }}"
+        iprange: "{{ FFNET_SUBNET }}"
+
+- name: Create fireflyiiidb Container
+  docker_container:
+    name: "{{ FFDB_NAME }}"
+    image: "{{ FFDB_IMAGE }}"
+    networks:
+      - name: "{{ FFNET_NAME }}"
+        ipv4_address: "{{ FFDB_IP }}"
+    networks_cli_compatible: yes
+    exposed_ports: "{{ FFDB_PORT }}"
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: firefly
+      MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
+      MYSQL_DATABASE: firefly
+    restart_policy: unless-stopped
+    volumes:
+      - "{{ FFDB_NAME }}:/var/lib/mysql"
+
+#- name: Create fireflyiii Container
+#  docker_container:
+#    name: "{{ FF_NAME }}"
+#    image: "{{ FF_IMAGE }}"
+#    networks:
+#      - name: "{{ FFNET_NAME }}"
+#        ipv4_address: "{{ FF_IP }}"
+#    networks_cli_compatible: yes
+#    published_ports: "{{ FF_PORT }}:8080"
+#    exposed_ports: "80:80"
+#    restart_policy: unless-stopped
+#    volumes:
+#      - "{{ FF_NAME }}:/var/www/firefly-iii/storage/export"
+#      - "{{ FF_NAME }}:/var/www/firefly-iii/storage/upload"
+#    env_file: /tmp/.env
+
+- name: Create fireflyiiicsv Container
+  docker_container:
+    name: "{{ FFCSV_NAME }}"
+    image: "{{ FFCSV_IMAGE }}"
+    networks:
+      - name: "{{ FFNET_NAME }}"
+        ipv4_address: "{{ FFCSV_IP }}"
+    networks_cli_compatible: yes
+    published_ports: "{{ FFCSV_PORT }}:80"
+    env:
+      FIREFLY_III_ACCESS_TOKEN: "{{ FIREFLY_ACCESS_TOKEN }}"
+      FIREFLY_III_URI: "{{ FFCSV_URI }}"
+    restart_policy: unless-stopped
+...

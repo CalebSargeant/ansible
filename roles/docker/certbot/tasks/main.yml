@@ -1,0 +1,69 @@
+#Initially you have to init the certbot and get the certificate manually.
+
+# Directories used:
+#/var/www
+#/var/www/certbot # handshake sites from certbot
+#/etc/letsencrypt # certificates are stored here
+# Initialize Certbot:
+#docker run --rm -ti \
+#  -v /var/www:/var/www \
+#  -v /etc/letsencrypt:/etc/letsencrypt \
+#certbot/certbot certonly --webroot -w /var/www/certbot -d <yor-domain-name> --email your.email@something.com
+#The letsencrypt and the www directory must be mounted on both containers. Certbot will check the certificates every 12h and nginx must reload the configuration periodically.
+
+#  certbot:
+#    image: certbot/dns-cloudflare
+#    restart: unless-stopped
+#    volumes:
+#      - /var/www:/var/www
+#      - /etc/letsencrypt:/etc/letsencrypt
+#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/html; sleep 12h & wait $${1}; done;'"
+
+# 1. add certbot docker
+# 2. Copy cloudflareini
+# 3. cert renewal cron job
+---
+- name: CERTBOT container
+  docker_container:
+    name: "{{ CERTBOT_NAME }}"
+    image: "{{ CERTBOT_IMAGE }}"
+    command: certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini -d sargeant.co,*.sargeant.co --email caleb.sargeant@outlook.com --agree-tos --preferred-challenges dns-01
+    restart_policy: "unless-stopped"
+    network_mode: host
+    volumes:
+      - "/etc/letsencrypt/:/etc/letsencrypt/"
+
+- name: Copy cloudflare.ini
+  template:
+    src: templates/cloudflare.ini.j2
+    dest: /etc/letsencrypt/cloudflare.ini
+    mode: '0400'
+
+#- name: Re-create a redis container
+#  docker_container:
+#    name: myredis
+#    image: redis
+#    command: certbot certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini -d sargeant.co,*.sargeant.co --preferred-challenges dns-01
+#    state: present
+#    recreate: yes
+#    exposed_ports:
+#      - 6379
+#    volumes_from:
+#      - mydata
+# SOMETIMES YOU HAVE TO RUN THIS COMMAND MANUALLY (PROBABLY FIRST TIME), SO HASH OUT FIRST TIME
+#- name: Letsencrypt Certificate
+#  command: /usr/bin/docker exec certbot certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini -d sargeant.co,*.sargeant.co --preferred-challenges dns-01
+#  register: res
+#  failed_when: false
+#  changed_when: false
+
+#- name: Cert Renewal Cron Job
+#  cron:
+#    name: "Cert Renewal"
+#    minute: "0"
+#    hour: "0"
+#    day: "1"
+#    month: "*"
+#    weekday: "*"
+#    job: "/usr/bin/docker exec {{ CERTBOT_NAME }} certbot renew --quiet" --post-hook "/usr/bin/docker exec {{ NGINX_NAME }} nginx -s reload" > /dev/null 2>&1
+...

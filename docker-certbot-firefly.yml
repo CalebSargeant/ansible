@@ -1,0 +1,9 @@
+---
+- hosts: firefly
+  become: yes
+  become_method: sudo
+  vars_files:
+  - ~/repos/personal/ansible/vars/docker/certbot.yml
+  roles:
+    - docker/certbot
+...

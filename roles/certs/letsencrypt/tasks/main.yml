@@ -40,6 +40,5 @@
     day: "1"
     month: "*"
     weekday: "*"
-    job: /usr/bin/certbot renew --quiet --post-hook "/usr/bin/docker exec {{ DOCKER_CONTAINER_NGINX
-     }} nginx -s reload" > /dev/null 2>&1
+    job: /usr/bin/certbot renew --quiet --post-hook "/usr/bin/docker exec {{ DOCKER_CONTAINER_NGINX }} nginx -s reload" > /dev/null 2>&1
 ...
