@@ -1,0 +1,31 @@
+---
+- name: Stop and Disable systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+    masked: yes
+
+# delete /etc/resolve & create own with nameserver=1.1.1.1
+# must apt install python3-pip
+# must pip3 install docker-py
+
+- name: PIHOLE container
+  docker_container:
+    name: "{{ PIHOLE_NAME }}"
+    image: "{{ PIHOLE_IMAGE }}"
+    restart_policy: "unless-stopped"
+    network_mode: host
+    volumes:
+      - "/etc/pihole/:/etc/pihole/"
+      - "/etc/dnsmasq.d/:/etc/dnsmasq.d/"
+    env:
+      TZ: "{{ TIMEZONE }}"
+      WEBPASSWORD: "{{ PIHOLE_PASSWORD }}"
+      ServerIP: "{{ PIHOLE_IP }}"
+      DNS1: "{{ DNS1 }}"
+      DNS2: "{{ DNS2 }}"
+      DNSMASQ_LISTENING: all
+    capabilities:
+      - NET_ADMIN
+...
