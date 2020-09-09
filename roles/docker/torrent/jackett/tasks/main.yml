@@ -3,26 +3,28 @@
   docker_container:
     name: "{{ TORRENT_JACKETT_NAME }}"
     image: "{{ TORRENT_JACKETT_IMAGE }}"
-    restart_policy: "no"
-    networks:
-      - name: "{{ TORRENT_NET_NAME }}"
-        ipv4_address: "{{ TORRENT_JACKETT_IP }}"
+    #restart_policy: "no"
+    restart_policy: unless-stopped
+    network_mode: host
+    #networks:
+    #  - name: "{{ TORRENT_NET_NAME }}"
+    #    ipv4_address: "{{ TORRENT_JACKETT_IP }}"
     purge_networks: yes
     networks_cli_compatible: no
-    exposed_ports: "{{ TORRENT_JACKETT_PORT }}"
+    published_ports: "{{ TORRENT_JACKETT_PORT }}:9117"
     volumes:
       - "{{ TORRENT_JACKETT_NAME }}:/config"
-      - "{{ DATA_LOCATION_DOWNLOADS }}/Torrents:/downloads"
+      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
     env:
       PUID: "{{ PUID }}"
       PGID: "{{ PGID }}"
       TZ: "{{ TIMEZONE }}"
 
-- name: JACKETT ServerConfig.json
-  template:
-    src: templates/ServerConfig.json.j2
-    dest: "/var/lib/docker/volumes/{{ TORRENT_JACKETT_NAME }}/_data/Jackett/ServerConfig.json"
-  register: jackett_config
+#- name: JACKETT ServerConfig.json
+#  template:
+#    src: templates/ServerConfig.json.j2
+#    dest: "/var/lib/docker/volumes/{{ TORRENT_JACKETT_NAME }}/_data/Jackett/ServerConfig.json"
+#  register: jackett_config
 
 #- name: JACKETT nginx
 #  template:
@@ -30,10 +32,10 @@
 #    dest: "/var/lib/docker/volumes/{{ TORRENT_NGINX_NAME }}/_data/sites-enabled/jackett.conf"
 #  register: nginx_config
 
-- name: JACKETT restart container
-  docker_container:
-    name: "{{ TORRENT_JACKETT_NAME }}"
-    state: started
-    restart: yes
-  when: jackett_config.changed
+#- name: JACKETT restart container
+#  docker_container:
+#    name: "{{ TORRENT_JACKETT_NAME }}"
+#    state: started
+#    restart: yes
+  #when: jackett_config.changed
 ...

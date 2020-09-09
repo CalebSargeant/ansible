@@ -3,39 +3,40 @@
   docker_container:
     name: "{{ TORRENT_MEDUSA_NAME }}"
     image: "{{ TORRENT_MEDUSA_IMAGE }}"
-    restart_policy: "no"
-    networks:
-      - name: "{{ TORRENT_NET_NAME }}"
-        ipv4_address: "{{ TORRENT_MEDUSA_IP }}"
+    #restart_policy: "no"
+    restart_policy: unless-stopped
+    network_mode: host
+    #networks:
+    #  - name: "{{ TORRENT_NET_NAME }}"
+    #    ipv4_address: "{{ TORRENT_MEDUSA_IP }}"
     purge_networks: yes
     networks_cli_compatible: no
     published_ports:
-      - "{{ TORRENT_MEDUSA_HTTPS_PORT }}:8081"
+      - "{{ TORRENT_MEDUSA_HTTP_PORT }}:8081"
     volumes:
       - "{{ TORRENT_MEDUSA_NAME }}:/config"
-      - "{{ DATA_LOCATION_SERIES }}/Series:/series"
-      - "{{ DATA_LOCATION_SERIES2 }}/Series:/series2"
-      - "{{ DATA_LOCATION_DOWNLOADS }}/Torrents:/downloads"
+      - "{{ DATA_LOCATION_SERIES }}:/series"
+      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
     env:
       PUID: "{{ PUID }}"
       PGID: "{{ PGID }}"
       TZ: "{{ TIMEZONE }}"
 
-- name: Copy letsencrypt Cert
-  copy:
-    src: /etc/letsencrypt/live/franklinhouse.co.za/fullchain.pem
-    dest: "/var/lib/docker/volumes/{{ TORRENT_MEDUSA_NAME }}/_data/fullchain.pem"
-    remote_src: yes
-    owner: www-data
-    group: www-data
+#- name: Copy letsencrypt Cert
+#  copy:
+#    src: /etc/letsencrypt/live/franklinhouse.co.za/fullchain.pem
+#    dest: "/var/lib/docker/volumes/{{ TORRENT_MEDUSA_NAME }}/_data/fullchain.pem"
+#    remote_src: yes
+#    owner: www-data
+#    group: www-data
 
-- name: Copy letsencrypt Key
-  copy:
-    src: /etc/letsencrypt/live/franklinhouse.co.za/privkey.pem
-    dest: "/var/lib/docker/volumes/{{ TORRENT_MEDUSA_NAME }}/_data/privkey.pem"
-    remote_src: yes
-    owner: www-data
-    group: www-data
+#- name: Copy letsencrypt Key
+#  copy:
+#    src: /etc/letsencrypt/live/franklinhouse.co.za/privkey.pem
+#    dest: "/var/lib/docker/volumes/{{ TORRENT_MEDUSA_NAME }}/_data/privkey.pem"
+#    remote_src: yes
+#    owner: www-data
+#    group: www-data
 
 #- name: MEDUSA config.xml
 #  synchronize:

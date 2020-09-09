@@ -1,10 +1,13 @@
 ---
-- hosts: valguero
+- hosts: server
   become: yes
   become_method: sudo
   vars_files:
   - ~/repos/personal/ansible/vars/docker/torrent.yml
-  - vars/docker/server1.yml
   roles:
+    - docker/torrent/plex
+    - docker/torrent/deluge
     - docker/torrent/jackett
+    - docker/torrent/radarr
+    - docker/torrent/medusa
 ...

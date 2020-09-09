@@ -3,20 +3,20 @@
   docker_container:
     name: "{{ TORRENT_DELUGE_NAME }}"
     image: "{{ TORRENT_DELUGE_IMAGE }}"
-    restart_policy: "no"
-    networks:
-      - name: "{{ TORRENT_NET_NAME }}"
-        ipv4_address: "{{ TORRENT_DELUGE_IP }}"
+    #restart_policy: "no"
+    restart_policy: unless-stopped
+    network_mode: host
+    #networks:
+    #  - name: "{{ TORRENT_NET_NAME }}"
+    #    ipv4_address: "{{ TORRENT_DELUGE_IP }}"
     purge_networks: yes
     networks_cli_compatible: no
     published_ports: "{{ TORRENT_DELUGE_PORT }}:{{ TORRENT_DELUGE_PORT }}"
     volumes:
       - "{{ TORRENT_DELUGE_NAME }}:/config"
-      - "{{ DATA_LOCATION_DOWNLOADS }}/Torrents:/downloads"
-      - "{{ DATA_LOCATION_MOVIES }}/Movies:/movies"
-      - "{{ DATA_LOCATION_MOVIES2 }}/Movies:/movies2"
-      - "{{ DATA_LOCATION_SERIES }}/Series:/series"
-      - "{{ DATA_LOCATION_SERIES2 }}/Series:/series2"
+      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
+      - "{{ DATA_LOCATION_MOVIES }}:/movies"
+      - "{{ DATA_LOCATION_SERIES }}:/series"
     env:
       PUID: "{{ PUID }}"
       PGID: "{{ PGID }}"
@@ -24,17 +24,17 @@
       UMASK_SET: "{{ TORRENT_DELUGE_UMASK }}"
       DELUGE_LOGLEVEL: "{{ TORRENT_DELUGE_LOGLEVEL }}"
 
-- name: DELUGE core.conf
-  synchronize:
-    src: templates/core.conf
-    dest: "/var/lib/docker/volumes/{{ TORRENT_DELUGE_NAME }}/_data/core.conf"
-  register: deluge_config
+#- name: DELUGE core.conf
+#  synchronize:
+#    src: templates/core.conf
+#    dest: "/var/lib/docker/volumes/{{ TORRENT_DELUGE_NAME }}/_data/core.conf"
+#  register: deluge_config
 
-- name: DELUGE autoadd.conf
-  synchronize:
-    src: templates/autoadd.conf
-    dest: "/var/lib/docker/volumes/{{ TORRENT_DELUGE_NAME }}/_data/autoadd.conf"
-  register: deluge_config
+#- name: DELUGE autoadd.conf
+#  synchronize:
+#    src: templates/autoadd.conf
+#    dest: "/var/lib/docker/volumes/{{ TORRENT_DELUGE_NAME }}/_data/autoadd.conf"
+#  register: deluge_config
 
 #- name: DELUGE nginx
 #  template:
@@ -42,10 +42,10 @@
 #    dest: "/var/lib/docker/volumes/{{ TORRENT_NGINX_NAME }}/_data/sites-enabled/deluge.conf"
 #  register: nginx_config
 
-- name: DELUGE restart container
-  docker_container:
-    name: "{{ TORRENT_DELUGE_NAME }}"
-    state: started
-    restart: yes
-  when: deluge_config.changed
+#- name: DELUGE restart container
+#  docker_container:
+#    name: "{{ TORRENT_DELUGE_NAME }}"
+#    state: started
+#    restart: yes
+#  when: deluge_config.changed
 ...
