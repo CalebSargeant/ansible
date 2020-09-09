@@ -1,0 +1,4 @@
+# to be done
+
+/dev/sda	/media/data	ext4	defaults	0 0
+/dev/sdb	/media/torrents	ext4	defaults	0 0

@@ -8,27 +8,37 @@
     packages:
     - samba
 
-- name: Create User admin
-  user:
-    name: admin
-    password: '{{ sambapass }}'
-    groups:
-      - www-data
-    state: present
-    system: yes
-    shell: /sbin/nologin
-    createhome: no
+#- name: Create User admin
+#  user:
+#    name: admin
+#    password: '{{ sambapass }}'
+#    groups:
+#      - www-data
+#    state: present
+#    system: yes
+#    shell: /sbin/nologin
+#    createhome: no
 
 # This doesnt / didnt work???
-- name: Create Samba User admin
-  shell: "printf '{{ sambapass }}\n{{ sambapass }}\n' | smbpasswd -a {{ sambauser }}"
-  failed_when: false
-  changed_when: false
+#- name: Create Samba User admin
+#  shell: "printf '{{ sambapass }}\n{{ sambapass }}\n' | smbpasswd -a {{ sambauser }}"
+#  failed_when: false
+#  changed_when: false
 
 - name: Configure smb.conf
-  synchronize:
-    src: templates/smb.conf
-    dest: /etc/samba/smb.conf
+  blockinfile:
+    path: /etc/samba/smb.conf
+    block: |
+      [data]
+         comment = Data
+         path = /media/data/share
+         read only = no
+         create mask = 0770
+         directory mask = 0771
+         guest ok = yes
+         public = yes
+         force user = ubuntu
+         force group = ubuntu
 
 - name: Restart Samba Service
   systemd:
