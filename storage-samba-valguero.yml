@@ -1,9 +1,0 @@
----
-- hosts: valguero
-  become: yes
-  become_method: sudo
-  vars_files:
-  - vars/storage/samba/general.yml
-  roles:
-    - storage/samba
-...

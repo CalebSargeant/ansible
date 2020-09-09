@@ -1,9 +1,0 @@
----
-- hosts: server3
-  become: yes
-  become_method: sudo
-  vars_files:
-  - vars/docker/gns3-server.yml
-  roles:
-    - docker/gns3-server
-...

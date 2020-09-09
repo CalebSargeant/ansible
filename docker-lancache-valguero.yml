@@ -1,9 +1,0 @@
----
-- hosts: valguero
-  become: yes
-  become_method: sudo
-  vars_files:
-  - vars/docker/general.yml
-  roles:
-    - docker/lancache
-...
