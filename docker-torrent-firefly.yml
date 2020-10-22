@@ -6,4 +6,7 @@
   - ~/repos/personal/ansible/vars/docker/torrent-firefly.yml
   roles:
     - docker/torrent/plex
+    - docker/torrent/deluge
+    - docker/torrent/radarr
+    - docker/torrent/jackett
 ...

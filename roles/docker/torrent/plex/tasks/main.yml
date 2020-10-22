@@ -16,6 +16,7 @@
       - "{{ TORRENT_PLEX_NAME }}:/config"
       - "{{ DATA_LOCATION_MOVIES }}:/movies"
       - "{{ DATA_LOCATION_SERIES }}:/series"
+      - "{{ DATA_LOCATION_PHOTOS }}:/photos"
       - "{{ DATA_LOCATION_TRAINING }}:/training"
     env:
       PUID: "{{ PUID }}"
