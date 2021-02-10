@@ -1,0 +1,18 @@
+---
+- name: Create NETBOOTXYZ Container
+  docker_container:
+    name: "{{ NETBOOTXYZ_NAME }}"
+    image: "{{ NETBOOTXYZ_IMAGE }}"
+    restart_policy: unless-stopped
+    networks_cli_compatible: yes
+    published_ports:
+      - "{{ NETBOOTXYZ_ASSET_PORT }}:80"
+      - "{{ NETBOOTXYZ_TFTP_PORT }}:69/udp"
+      - "{{ NETBOOTXYZ_WEB_PORT }}:3000"
+    volumes:
+      - "{{ NETBOOTXYZ_NAME }}:/config"
+      - "{{ DATA_LOCATION_ISO }}:/assets"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+...

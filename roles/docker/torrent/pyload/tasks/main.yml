@@ -1,0 +1,20 @@
+---
+- name: PYLOAD container
+  docker_container:
+    name: "{{ TORRENT_PYLOAD_NAME }}"
+    image: "{{ TORRENT_PYLOAD_IMAGE }}"
+    restart_policy: unless-stopped
+    network_mode: host
+    purge_networks: yes
+    networks_cli_compatible: no
+    published_ports:
+      - "{{ TORRENT_PYLOAD_HTTP_PORT }}:8000"
+      - "{{ TORRENT_PYLOAD_CTRL_PORT }}:7227"
+    volumes:
+      - "{{ TORRENT_PYLOAD_NAME }}:/config"
+      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+...

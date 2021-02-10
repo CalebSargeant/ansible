@@ -1,0 +1,54 @@
+---
+#- name: TIMEMACHINE network
+#  docker_network:
+#    name: macvlan
+#    driver: macvlan
+#    driver_options:
+#      parent: "ens160"
+#    ipam_config:
+#      - subnet: "10.0.3.0/24"
+#        gateway: "10.0.3.1"
+#        iprange: "10.0.3.0/24"
+
+- name: TIMEMACHINE container
+  docker_container:
+    name: "{{ TIMEMACHINE_NAME }}"
+    image: "{{ TIMEMACHINE_IMAGE }}"
+    restart_policy: "unless-stopped"
+    #network_mode: macvlan
+    network_mode: host
+    #networks_cli_compatible: yes
+    #networks:
+    #  - name: "macvlan"
+    #    ipv4_address: "10.0.3.12"
+    volumes:
+      - "/media/timemachine/share:/opt/timemachine"
+      - "/media/timemachine/users:/users"
+      - "timemachine-var-lib-samba:/var/lib/samba"
+      - "timemachine-var-cache-samba:/var/cache/samba"
+      - "timemachine-run-samba:/run/samba"
+
+    env:
+      CUSTOM_SMB_CONF: "false"
+      CUSTOM_USER: "false"
+      DEBUG_LEVEL: "1"
+      MIMIC_MODEL: "TimeCapsule8,119"
+      EXTERNAL_CONF: "/users"
+      HIDE_SHARES: "no"
+      TM_USERNAME: "timemachine"
+      TM_GROUPNAME: "timemachine"
+      TM_UID: "{{ PUID }}"
+      TM_GID: "{{ PGID }}"
+      PASSWORD: "timemachine"
+      SET_PERMISSIONS: "false"
+      SHARE_NAME: "TimeMachine"
+      SMB_INHERIT_PERMISSIONS: "no"
+      SMB_NFS_ACES: "yes"
+      SMB_PORT: "445"
+      SMB_VFS_OBJECTS: "fruit streams_xattr"
+      VOLUME_SIZE_LIMIT: "0"
+      WORKGROUP: "WORKGROUP"
+...
+
+
+#https://hub.docker.com/r/mbentley/timemachine

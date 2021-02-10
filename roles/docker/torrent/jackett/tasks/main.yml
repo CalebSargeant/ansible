@@ -11,7 +11,7 @@
     #    ipv4_address: "{{ TORRENT_JACKETT_IP }}"
     purge_networks: yes
     networks_cli_compatible: no
-    published_ports: "{{ TORRENT_JACKETT_PORT }}:9117"
+    #published_ports: "{{ TORRENT_JACKETT_PORT }}:9117"
     volumes:
       - "{{ TORRENT_JACKETT_NAME }}:/config"
       - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"

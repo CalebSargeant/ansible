@@ -1,0 +1,20 @@
+---
+- name: CALIBRE_WEB container
+  docker_container:
+    name: "{{ TORRENT_CALIBRE_WEB_NAME }}"
+    image: "{{ TORRENT_CALIBRE_WEB_IMAGE }}"
+    restart_policy: unless-stopped
+    network_mode: host
+    purge_networks: yes
+    networks_cli_compatible: no
+    published_ports:
+      - "{{ TORRENT_CALIBRE_WEB_PORT }}:8083"
+    volumes:
+      - "{{ TORRENT_CALIBRE_WEB_NAME }}:/config"
+      - "{{ DATA_LOCATION_BOOKS }}:/books"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+      DOCKER_MODS: linuxserver/calibre-web:calibre
+...

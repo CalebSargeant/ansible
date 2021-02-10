@@ -1,0 +1,22 @@
+---
+- name: LAZYLIBRARIAN container
+  docker_container:
+    name: "{{ TORRENT_LAZYLIBRARIAN_NAME }}"
+    image: "{{ TORRENT_LAZYLIBRARIAN_IMAGE }}"
+    restart_policy: unless-stopped
+    network_mode: host
+    purge_networks: yes
+    networks_cli_compatible: no
+    published_ports:
+      - "{{ TORRENT_LAZYLIBRARIAN_PORT }}:5299"
+    volumes:
+      - "{{ TORRENT_LAZYLIBRARIAN_NAME }}:/config"
+      - "{{ DATA_LOCATION_BOOKS }}:/books"
+      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+      DOCKER_MODS: linuxserver/calibre-web:calibre|linuxserver/mods:lazylibrarian-ffmpeg
+
+...

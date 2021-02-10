@@ -1,0 +1,29 @@
+---
+- name: Create SCRUTINY Container
+  docker_container:
+    name: "{{ SCRUTINY_NAME }}"
+    image: "{{ SCRUTINY_IMAGE }}"
+    restart_policy: unless-stopped
+    networks_cli_compatible: yes
+    published_ports: "{{ SCRUTINY_PORT }}:8080"
+    volumes:
+      - "{{ SCRUTINY_NAME }}:/config"
+      - /run/udev:/run/udev:ro
+    capabilities:
+      - SYS_RAWIO
+    #  - SYS_ADMIN
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+      SCRUTINY_API_ENDPOINT: http://localhost:8080
+      SCRUTINY_WEB: "true"
+      SCRUTINY_COLLECTOR: "true"
+    devices:
+      - /dev/sda:/dev/sda
+      - /dev/sdb:/dev/sdb
+      - /dev/sdc:/dev/sdc
+      - /dev/sdd:/dev/sdd
+      - /dev/sde:/dev/sde
+      - /dev/sdf:/dev/sdf
+...

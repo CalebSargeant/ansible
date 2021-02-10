@@ -18,9 +18,23 @@
       - "{{ DATA_LOCATION_SERIES }}:/series"
       - "{{ DATA_LOCATION_PHOTOS }}:/photos"
       - "{{ DATA_LOCATION_TRAINING }}:/training"
+      - "{{ DATA_LOCATION_BOOKS }}:/books"
     env:
       PUID: "{{ PUID }}"
       PGID: "{{ PGID }}"
       VERSION: "{{ TORRENT_PLEX_VERSION }}"
       PLEX_CLAIM: "{{ TORRENT_PLEX_CLAIM }}"
 ...
+
+
+# To do:
+# explained here: https://www.techjunkie.com/how-to-install-plugins-plex/
+# download:
+# https://github.com/ukdtom/WebTools.bundle/releases/tag/2.4.1
+# then copy WebTools.bundle to volumes/plex/_data/Library/Application Support/Plex Media Server/Plug-ins
+# reboot server
+#  chown -R ubuntu:ubuntu WebTools.bundle/
+# This just gives you ability to download plugins manually in a nice and easy way -
+# we could always just download whatever version of a plugin and add to this playbook
+# both are a good idea
+# after adding plugin via WebTools, it appears that you need to restart docker container

@@ -1,29 +1,28 @@
 ---
-- name: Firefly Cron - Recurring Transactions
-  cron:
-    name: "Firefly Recurring Transactions"
-    minute: "45"
-    hour: "4"
-    day: "*"
-    month: "*"
-    weekday: "*"
-    job: "/usr/bin/docker exec firefly_iii_app php /var/www/firefly-iii/artisan firefly:cron | mail -s \"[Cron] Firefly III - Recurring Transactions\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
+### https://docs.firefly-iii.org/installation/docker#using-docker-compose
+### CRON JOBS
+#- name: Firefly Cron - Recurring Transactions
+#  cron:
+#    name: "Firefly Recurring Transactions"
+#    minute: "45"
+#    hour: "4"
+#    day: "*"
+#    month: "*"
+#    weekday: "*"
+#    job: "/usr/bin/docker exec firefly_iii_app php /var/www/firefly-iii/artisan firefly:cron | mail -s \"[Cron] Firefly III - Recurring Transactions\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
 
-- name: Firefly Cron - Backups
-  cron:
-    name: "Firefly Backups"
-    minute: "50"
-    hour: "4"
-    day: "*"
-    month: "*"
-    weekday: "*"
-    job: "/bin/bash -c 'for CONTAINER in firefly_iii_upload firefly_iii_export firefly_iii_nginx firefly_iii_db; do /usr/bin/docker run --rm -v \"$CONTAINER:/tmp/$CONTAINER\" -v \"/mnt/data/Backups/Firefly:/backup\" ubuntu tar -czvf \"/backup/`date +\\%C\\%y\\%m\\%d`-$CONTAINER.tar\" -C / \"tmp/$CONTAINER/\"; done > /tmp/firefly-backup.log && ls -hal /mnt/data/Backups/Firefly | grep `date +\\%C\\%y\\%m\\%d` && cat /tmp/firefly-backup.log' | mail -s \"[Cron] Firefly III - Backups\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
+#- name: Firefly Cron - Backups
+#  cron:
+#    name: "Firefly Backups"
+#    minute: "50"
+#    hour: "4"
+#    day: "*"
+#    month: "*"
+#    weekday: "*"
+#    job: "/bin/bash -c 'for CONTAINER in firefly_iii_upload firefly_iii_export firefly_iii_nginx firefly_iii_db; do /usr/bin/docker run --rm -v \"$CONTAINER:/tmp/$CONTAINER\" -v \"/mnt/data/Backups/Firefly:/backup\" ubuntu tar -czvf \"/backup/`date +\\%C\\%y\\%m\\%d`-$CONTAINER.tar\" -C / \"tmp/$CONTAINER/\"; done > /tmp/firefly-backup.log && ls -hal /mnt/data/Backups/Firefly | grep `date +\\%C\\%y\\%m\\%d` && cat /tmp/firefly-backup.log' | mail -s \"[Cron] Firefly III - Backups\" -a \"From: Firefly\" \"calebsargeant@gmail.com\""
+###
 
-- name: Copy .env file for fireflyiii
-  template:
-    src: templates/.env.j2
-    dest: /tmp/.env
-
+### Create the network - to only publish the app and expose db, etc.
 - name: Create Docker Network
   docker_network:
     name: "{{ FFNET_NAME }}"
@@ -32,6 +31,7 @@
         gateway: "{{ FFNET_GW }}"
         iprange: "{{ FFNET_SUBNET }}"
 
+### FIREFLY III DB
 - name: Create fireflyiiidb Container
   docker_container:
     name: "{{ FFDB_NAME }}"
@@ -50,22 +50,39 @@
     volumes:
       - "{{ FFDB_NAME }}:/var/lib/mysql"
 
-#- name: Create fireflyiii Container
-#  docker_container:
-#    name: "{{ FF_NAME }}"
-#    image: "{{ FF_IMAGE }}"
-#    networks:
-#      - name: "{{ FFNET_NAME }}"
-#        ipv4_address: "{{ FF_IP }}"
-#    networks_cli_compatible: yes
-#    published_ports: "{{ FF_PORT }}:8080"
-#    exposed_ports: "80:80"
-#    restart_policy: unless-stopped
-#    volumes:
-#      - "{{ FF_NAME }}:/var/www/firefly-iii/storage/export"
-#      - "{{ FF_NAME }}:/var/www/firefly-iii/storage/upload"
-#    env_file: /tmp/.env
+### FIREFLY III APP
+- name: Create fireflyiiiapp Container
+  docker_container:
+    name: "{{ FF_NAME }}"
+    image: "{{ FF_IMAGE }}"
+    networks:
+      - name: "{{ FFNET_NAME }}"
+        ipv4_address: "{{ FF_IP }}"
+    networks_cli_compatible: yes
+    published_ports: "{{ FF_PORT }}:8080"
+    exposed_ports: "80:80"
+    env:
+      APP_KEY: "{{ APP_KEY }}"
+      DB_HOST: "{{ FFDB_NAME }}"
+      DB_PORT: "{{ FFDB_PORT }}"
+      DB_CONNECTION: mysql
+      DB_DATABASE: firefly
+      DB_USERNAME: firefly
+      DB_PASSWORD: "{{ MYSQL_PASSWORD }}"
+      MAIL_HOST: "{{ MAIL_HOST }}"
+      MAIL_PORT: "{{ MAIL_PORT }}"
+      MAIL_FROM: "{{ MAIL_FROM }}"
+      MAIL_USERNAME: "{{ MAIL_USERNAME }}"
+      MAIL_PASSWORD: "{{ MAIL_PASSWORD }}"
+      MAIL_ENCRYPTION: "{{ MAIL_ENCRYPTION }}"
+    restart_policy: unless-stopped
+    comparisons:
+      '*': ignore
+    volumes:
+      - "{{ FF_NAME }}:/var/www/firefly-iii/storage/export"
+      - "{{ FF_NAME }}:/var/www/firefly-iii/storage/upload"
 
+### FIREFLY III UPLOAD - https://firefly-iii.gitbook.io/firefly-iii-csv-importer/installing-and-running/docker
 - name: Create fireflyiiicsv Container
   docker_container:
     name: "{{ FFCSV_NAME }}"
@@ -74,7 +91,7 @@
       - name: "{{ FFNET_NAME }}"
         ipv4_address: "{{ FFCSV_IP }}"
     networks_cli_compatible: yes
-    published_ports: "{{ FFCSV_PORT }}:80"
+    published_ports: "{{ FFCSV_PORT }}:8080"
     env:
       FIREFLY_III_ACCESS_TOKEN: "{{ FIREFLY_ACCESS_TOKEN }}"
       FIREFLY_III_URI: "{{ FFCSV_URI }}"

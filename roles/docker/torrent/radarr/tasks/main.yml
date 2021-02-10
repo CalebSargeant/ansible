@@ -9,7 +9,7 @@
     #networks:
     #  - name: "{{ TORRENT_NET_NAME }}"
     #    ipv4_address: "{{ TORRENT_RADARR_IP }}"
-    published_ports: "{{ TORRENT_RADARR_PORT }}:{{ TORRENT_RADARR_PORT }}"
+    #published_ports: "{{ TORRENT_RADARR_PORT }}:{{ TORRENT_RADARR_PORT }}"
     purge_networks: yes
     networks_cli_compatible: no
     volumes:

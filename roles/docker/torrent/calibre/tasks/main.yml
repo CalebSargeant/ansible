@@ -1,0 +1,23 @@
+---
+- name: CALIBRE container
+  docker_container:
+    name: "{{ TORRENT_CALIBRE_NAME }}"
+    image: "{{ TORRENT_CALIBRE_IMAGE }}"
+    restart_policy: unless-stopped
+    network_mode: bridge
+    purge_networks: yes
+    networks_cli_compatible: no
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        #ipv4_address: "{{ TORRENT_CALIBRE_IP }}"
+    published_ports:
+      - "{{ TORRENT_CALIBRE_DGUI_PORT }}:8080"
+      - "{{ TORRENT_CALIBRE_WGUI_PORT }}:8081"
+    volumes:
+      - "{{ TORRENT_CALIBRE_NAME }}:/config"
+      - "{{ DATA_LOCATION_BOOKS }}:/books"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+...

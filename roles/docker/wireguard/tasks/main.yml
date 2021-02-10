@@ -1,0 +1,27 @@
+---
+- name: WIREGUARD container
+  docker_container:
+    name: "{{ WIREGUARD_NAME }}"
+    image: "{{ WIREGUARD_IMAGE }}"
+    restart_policy: "unless-stopped"
+    #networks_cli_compatible: yes
+    #published_ports: "{{ WIREGUARD_PORT }}:51820"
+    network_mode: host
+    volumes:
+      - "{{ WIREGUARD_NAME }}:/config"
+      - /lib/modules:/lib/modules
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+      SERVERURL: "{{ WIREGUARD_SERVERURL }}"
+      PEERS: "{{ WIREGUARD_PEERS }}"
+      SERVERPORT: "{{ WIREGUARD_PORT }}"
+      PEERDNS: "{{ WIREGUARD_PEERDNS }}"
+      ALLOWEDIPS: "{{ WIREGUARD_ALLOWEDIPS }}"
+      INTERNAL_SUBNET: "{{ WIREGUARD_INTERNAL_SUBNET }}"
+    sysctls: net.ipv4.conf.all.src_valid_mark=1
+    capabilities:
+      - NET_ADMIN
+      - SYS_MODULE
+...
