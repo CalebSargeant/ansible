@@ -8,8 +8,8 @@
     - docker/torrent/plex
     - docker/torrent/deluge
     - docker/torrent/jackett
-    - docker/torrent/radarr
-    - docker/torrent/medusa
+#    - docker/torrent/radarr
+#    - docker/torrent/medusa
 #    - docker/torrent/lazylibrarian
 #    - docker/torrent/calibre
 #    - docker/torrent/calibre-web

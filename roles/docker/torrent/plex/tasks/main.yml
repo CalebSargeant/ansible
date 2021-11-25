@@ -12,6 +12,7 @@
     #published_ports: "{{ TORRENT_PLEX_PORT }}:32400"
     #purge_networks: yes
     #networks_cli_compatible: no
+    privileged: yes
     volumes:
       - "{{ TORRENT_PLEX_NAME }}:/config"
       - "{{ DATA_LOCATION_MOVIES }}:/movies"
