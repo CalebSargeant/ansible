@@ -5,13 +5,16 @@
   vars_files:
   - ~/repos/personal/ansible/vars/docker/torrent.yml
   roles:
-    - docker/torrent/plex
-    - docker/torrent/deluge
-    - docker/torrent/jackett
+#    - docker/torrent/plex
+#    - docker/torrent/deluge
+#    - docker/torrent/jackett
 #    - docker/torrent/radarr
 #    - docker/torrent/medusa
 #    - docker/torrent/lazylibrarian
-#    - docker/torrent/calibre
-#    - docker/torrent/calibre-web
+#    - docker/torrent/readarr
+#    - docker/torrent/prowlarr
+#    - docker/torrent/sonarr
+    - docker/torrent/calibre
+    - docker/torrent/calibre-web
 #    - docker/torrent/pyload
 ...

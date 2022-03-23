@@ -7,6 +7,7 @@
     network_mode: host
     purge_networks: yes
     networks_cli_compatible: no
+    privileged: yes
     published_ports:
       - "{{ TORRENT_LAZYLIBRARIAN_PORT }}:5299"
     volumes:
