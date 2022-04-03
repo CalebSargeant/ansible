@@ -1,0 +1,10 @@
+---
+- hosts: server
+  become: yes
+  become_method: sudo
+  vars_files:
+  - vars/ark/general.yml
+  - vars/ark/ragnarok.yml
+  roles:
+    - ark/install
+...

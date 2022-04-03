@@ -25,10 +25,11 @@
     src: templates/GameUserSettings.ini.j2
     dest: /home/steam/ARK/ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini
 
-- name: Install Mods
-  command: arkmanager installmods
-  failed_when: false
-  changed_when: false
+### Uncomment this when want to install mods
+#- name: Install Mods
+#  command: arkmanager installmods
+#  failed_when: false
+#  changed_when: false
 
 - name: Start Ark
   command: arkmanager start
