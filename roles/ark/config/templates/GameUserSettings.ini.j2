@@ -7,7 +7,7 @@ alwaysNotifyPlayerLeft=1
 bAllowFlyerCarryPvE=1
 bDisableStructureDecayPvE=1
 DayCycleSpeedScale=1.00000
-DayTimeSpeedScale=1.00000
+DayTimeSpeedScale=0.80000
 NightTimeSpeedScale=2.50000
 DinoCharacterFoodDrainMultiplier=1.00000
 DinoCharacterHealthRecoveryMultiplier=1.00000
@@ -44,8 +44,8 @@ StructureDamageMultiplier=1.00000
 StructureResistanceMultiplier=1.00000
 TamedDinoDamageMultiplier=2.00000
 TamedDinoResistanceMultiplier=2.00000
-TamingSpeedMultiplier=6.00000
-XPMultiplier=4.00000
+TamingSpeedMultiplier=8.00000
+XPMultiplier=3.00000
 EnablePVPGamma=0
 EnablePVEGamma=0
 SpectatorPassword=
@@ -59,12 +59,12 @@ PvEDinoDecayPeriodMultiplier=1.00000
 #FastDecayUnsnappedCoreStructures=true
 AdminLogging=0
 MaxTamedDinos=8000
-MaxNumbersofPlayersInTribe=2
+MaxNumbersofPlayersInTribe=10
 BattleNumOfTribestoStartGame=2
 TimeToCollapseROD=100
 BattleAutoStartGameInterval=100
 BattleSuddenDeathInterval=300
-KickIdlePlayersPeriod=1800
+KickIdlePlayersPeriod=0
 PerPlatformMaxStructuresMultiplier=10.00000
 StructureDamageRepairCooldown=0
 bForceAllStructureLocking=1
@@ -126,11 +126,35 @@ SessionName={{ session_name }}
 Duration=15
 Message=Welcome to Franklin House Ark!
 
-# MOD OPTIONS
+### MOD OPTIONS
+# S+ - https://docs.google.com/spreadsheets/d/e/2PACX-1vTCz51gbAXrJjqpTySgqID0SvEScS6hBwpzEawIBj4h3l4iX0695S2TWgQYRaU6bL31h-IK_LLubGbO/pubhtml
 [StructuresPlus]
 NoFoundationsRequired=true
+EnableEngramOverride=true
+OverrideTekEngrams=true
+ArePlatformsImmuneToDamage=true
+DisableGeneratorDuringStorm=true
+DisableElectronicsDuringStorm=true
 
-[DPsTranqSniper]
-NarcoticDartMultiplier=5.0
-EnhNarcoticDartMultiplier=10.0
-MassNarcoticDartMultiplier=15.0
+# PlatformsPlus - https://pastebin.com/w9kPFMJ5
+[PlatformsPlus]
+IsImmuneToDamage=true
+
+# Human NPCs - https://steamcommunity.com/workshop/filedetails/discussion/1443404076/1733210552645207209
+[Human_NPCs]
+Total_NPCs=500
+Nude_NPCs=1
+NoTames=1
+StartFriendly=1
+NoFireArrow=1
+PlayerHutDistance=1000
+
+# SwimClear Scuba Mask
+[SwimClear]
+EnableOverlay=2
+
+# Disabled Mods
+#[DPsTranqSniper]
+#NarcoticDartMultiplier=5.0
+#EnhNarcoticDartMultiplier=10.0
+#MassNarcoticDartMultiplier=15.0

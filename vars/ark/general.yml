@@ -8,26 +8,35 @@
 # Valguero_P
 
 ### Mods
-# 928102085 = HG Stacking Mod
-# 731604991 = Structures +
-# 719928795 = Plaforms +
-# 722649005 = Redwoods anywhere
-# 895711211 = Classic Flyers
-# 655261420 = Homing Pidgeon
-# 924933745 = Dino Tracker
-# 870709781 = Dino Pickup Mod
-# 566885854 = Death Helper
-# 1102050924 = Swim Clear Scuba Mask
-# 756389708 = Builders Helment
-# 793605978 = Super Spyglass
-# 587288100 = DPs Tranquilizer Sniper Rifle
-# 805003358 = Ammo Extension for DP TranqSniper
-# 924563988 = Wyvern Nests Plus
-# 821530042 = Upgrade Station
-# 774762563 = Kibble Table
+# 2203473621 = Ark Uncut 2.1 - https://steamcommunity.com/sharedfiles/filedetails/?id=2203473621
+# 928102085 = HG Stacking Mod - https://steamcommunity.com/sharedfiles/filedetails/?id=928102085
+# 731604991 = Structures + - https://steamcommunity.com/sharedfiles/filedetails/?id=731604991
+# 719928795 = Plaforms + - https://steamcommunity.com/sharedfiles/filedetails/?id=719928795
+# 708807240 = Pillars Plus - https://steamcommunity.com/sharedfiles/filedetails/?id=708807240
+# 722649005 = Redwoods anywhere - https://steamcommunity.com/sharedfiles/filedetails/?id=722649005
+# 893834064 = Wooden Hanging Bridge - https://steamcommunity.com/sharedfiles/filedetails/?id=893834064
+# 1443404076 = Human  NPCs - https://steamcommunity.com/sharedfiles/filedetails/?id=1443404076
+# 1300713111 = Rare Sightings - https://steamcommunity.com/sharedfiles/filedetails/?id=1300713111
+# 609425335 = Beacon Enhancer - https://steamcommunity.com/sharedfiles/filedetails/?id=609425335
+# 2357644511 = MarniiMods: Hairstyles - https://steamcommunity.com/sharedfiles/filedetails/?id=2357644511
+# 895711211 = Classic Flyers - https://steamcommunity.com/sharedfiles/filedetails/?id=895711211
+# 655261420 = Homing Pidgeon - https://steamcommunity.com/sharedfiles/filedetails/?id=655261420
+# 924933745 = Dino Tracker - https://steamcommunity.com/sharedfiles/filedetails/?id=924933745
+# 1609138312 = Dino Storage - https://steamcommunity.com/sharedfiles/filedetails/?id=1609138312
+# 754885087 = More Narcotics & More Tranq Arrows - https://steamcommunity.com/sharedfiles/filedetails/?id=754885087
+# 1102050924 = Swim Clear Scuba Mask - https://steamcommunity.com/sharedfiles/filedetails/?id=1102050924
+# 756389708 = Builders Helmet - https://steamcommunity.com/sharedfiles/filedetails/?id=756389708
+# 793605978 = Super Spyglass - https://steamcommunity.com/sharedfiles/filedetails/?id=793605978
+# 821530042 = Upgrade Station - https://steamcommunity.com/sharedfiles/filedetails/?id=821530042
+# 774762563 = Kibble Table - https://steamcommunity.com/sharedfiles/filedetails/?id=774762563
+# 638464460 = Armored Storage Stands - https://steamcommunity.com/sharedfiles/filedetails/?id=638464460
+
+#  old mods
+# 587288100 = DPs Tranquilizer Sniper Rifle - https://steamcommunity.com/sharedfiles/filedetails/?id=587288100
+# 805003358 = Ammo Extension for DP TranqSniper - https://steamcommunity.com/sharedfiles/filedetails/?id=805003358
 
 ---
-ark_mods: 928102085,731604991,719928795,722649005,895711211,655261420,924933745,870709781,566885854,1102050924,756389708,793605978,587288100,805003358,924563988,821530042,774762563
+ark_mods: 2203473621,928102085,731604991,719928795,708807240,722649005,893834064,1443404076,1300713111,609425335,2357644511,895711211,655261420,924933745,1609138312,754885087,1102050924,756389708,793605978,821530042,774762563,638464460
 max_players: 10
 ark_admin_password: Changeme@123
 ...
