@@ -1,0 +1,9 @@
+---
+- hosts: firefly
+  become: yes
+  become_method: sudo
+  #vars_files:
+  #- ~/repos/personal/ansible/vars/docker/server.yml
+  roles:
+    - docker/monolithic
+...
