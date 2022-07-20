@@ -1,7 +1,7 @@
 ---
-- name: Create LANCACHE-DNS Container
+- name: Create LANCACHE Container
   docker_container:
-    name: "lancache-dns"
+    name: "lancache"
     image: "jrcichra/lancachenet-lancache-dns:latest"
     restart_policy: unless-stopped
     networks_cli_compatible: yes

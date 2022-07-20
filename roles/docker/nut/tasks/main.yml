@@ -1,0 +1,8 @@
+---
+- name: NUT container
+  docker_container:
+    name: nut
+    image: instantlinux/nut-upsd
+    restart_policy: "unless-stopped"
+    network_mode: host
+...

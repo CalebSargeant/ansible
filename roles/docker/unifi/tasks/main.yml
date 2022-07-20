@@ -1,0 +1,25 @@
+---
+- name: UniFi Container
+  community.general.docker_container:
+    name: unifi
+    image: linuxserver/unifi-controller
+    restart_policy: unless-stopped
+    network_mode: host
+    #networks:
+      #- name: "{{ UNIFI_NET_NAME }}"
+        #ipv4_address: "{{ UNIFI_IP }}"
+    volumes:
+      - unifi:/config
+      #- /etc/letsencrypt/live/unifi.chatinc.com:/cert
+    purge_networks: yes
+    networks_cli_compatible: no
+    published_ports: 
+      - "8443:8443"
+      - "3478:3478/udp"
+      - "10001:10001/udp"
+      - "8080:8080"
+    privileged: "yes"
+    env: 
+      PUID=1000
+      PGID=1000
+...
