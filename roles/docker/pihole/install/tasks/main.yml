@@ -15,12 +15,13 @@
     name: "{{ PIHOLE_NAME }}"
     image: "{{ PIHOLE_IMAGE }}"
     restart_policy: "unless-stopped"
-    network_mode: host
-    #ports:
-      #- "53:53/tcp"
-      #- "53:53/udp"
-      #- "67:67/udp"
-      #- "81:81/tcp"
+    #network_mode: host
+    exposed_ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    published_ports:
+      - "81:80/tcp"
     volumes:
       - "/etc/pihole/:/etc/pihole/"
       - "/etc/dnsmasq.d/:/etc/dnsmasq.d/"

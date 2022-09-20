@@ -1,0 +1,58 @@
+---
+- name: Create nextcloud Container
+  docker_container:
+    name: nextcloud
+    image: lscr.io/linuxserver/nextcloud:latest
+    restart_policy: unless-stopped
+    exposed_ports: "443"
+    networks_cli_compatible: yes
+    volumes:
+      - nextcloud:/config
+      - /media/data/share:/data
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Africa/Johannesburg"
+
+- name: Create mariadb Container
+  docker_container:
+    name: mariadb
+    image: lscr.io/linuxserver/mariadb:latest
+    restart_policy: unless-stopped
+    exposed_ports: "3306"
+    networks_cli_compatible: yes
+    volumes:
+      - mariadb:/config
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Africa/Johannesburg"
+      MYSQL_ROOT_PASSWORD: "{{ MYSQL_ROOT_PASSWORD }}"
+      MYSQL_DATABASE: "nextcloud"
+      MYSQL_USER: "nextcloud"
+      MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
+
+- name: Create nginx Container
+  docker_container:
+    name: nginx
+    image: lscr.io/linuxserver/nginx:latest
+    restart_policy: unless-stopped
+    published_ports: 
+      - "443:443"
+    networks_cli_compatible: yes
+    volumes:
+      - nginx:/config
+      - /etc/letsencrypt:/certs
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Africa/Johannesburg"
+
+- name: Copy Nginx config
+  copy:
+    src: templates/default.conf
+    dest: /var/snap/docker/common/var-lib-docker/volumes/nginx/_data/nginx/site-confs/default.conf
+
+- name: Restart nginx
+  command: docker restart nginx
+...
