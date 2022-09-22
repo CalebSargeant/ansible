@@ -1,0 +1,10 @@
+---
+- name: Install Required System Packages
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - haproxy
+    

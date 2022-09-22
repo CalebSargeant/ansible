@@ -22,12 +22,11 @@
     #  - name: "macvlan"
     #    ipv4_address: "10.0.3.12"
     volumes:
-      - "/media/timemachine/share:/opt/timemachine"
-      - "/media/timemachine/users:/users"
+      - "/mnt/data/timemachine/share:/opt/timemachine"
+      - "/mnt/data/timemachine/users:/users"
       - "timemachine-var-lib-samba:/var/lib/samba"
       - "timemachine-var-cache-samba:/var/cache/samba"
       - "timemachine-run-samba:/run/samba"
-
     env:
       CUSTOM_SMB_CONF: "false"
       CUSTOM_USER: "false"
@@ -48,7 +47,33 @@
       SMB_VFS_OBJECTS: "fruit streams_xattr"
       VOLUME_SIZE_LIMIT: "0"
       WORKGROUP: "WORKGROUP"
+
+- name: Add the user caleb
+  ansible.builtin.user:
+    name: caleb
+    shell: /bin/bash
+    #groups: admins,developers
+    append: yes
+
+- name: Add the user taleb
+  ansible.builtin.user:
+    name: tracey
+    shell: /bin/bash
+    #groups: admins,developers
+    append: yes
+
+- name: template caleb config
+  template:
+    src: templates/caleb.conf.j2
+    dest: /mnt/data/timemachine/users/caleb.conf
+
+- name: template tracey config
+  template:
+    src: templates/tracey.conf.j2
+    dest: /mnt/data/timemachine/users/tracey.conf
 ...
 
 
 #https://hub.docker.com/r/mbentley/timemachine
+
+

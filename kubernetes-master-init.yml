@@ -1,0 +1,9 @@
+---
+- hosts: kube_masters
+  become: yes
+  become_method: sudo
+  vars_files:
+  - ~/repos/personal/ansible/vars/kubernetes/general.yml
+  roles:
+    - kubernetes/master-init
+...

@@ -1,0 +1,17 @@
+---
+- name: Copy kubeadm-init.yml
+  copy:
+    src: templates/kubeadm-init.yml
+    dest: /root/kubeadm-init.yml
+
+- name: Initialize the cluster
+  shell: kubeadm init --config=kubeadm-init.yml
+
+- name: Copy Admin Config to Home Dir
+  copy:
+    remote_src: yes
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ubuntu/.kube/config
+
+- name: Create CNI Weave Network
+  shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"

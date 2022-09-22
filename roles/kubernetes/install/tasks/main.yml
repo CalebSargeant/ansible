@@ -1,0 +1,45 @@
+---
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+
+- name: Install Required System Packages
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+
+- name: Download Google Cloud public signing key
+  command: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: APT Package
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/kubernetes.list
+    line: deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main
+    create: yes
+
+- name: Install package index kublet, kubeadm, and kubectl
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: latest
+  vars:
+    packages:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+- name: Hold packages
+  dpkg_selections:
+    name: "{{ packages }}"
+    selection: hold
+  vars:
+    packages:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+  
