@@ -1,8 +1,19 @@
 ---
+- name: Create Docker Network
+  docker_network:
+    name: "{{ NET_NAME }}"
+    ipam_config:
+      - subnet: "{{ NET_SUBNET }}"
+        gateway: "{{ NET_GW }}"
+        iprange: "{{ NET_SUBNET }}"
+
 - name: Create nextcloud Container
   docker_container:
     name: nextcloud
     image: lscr.io/linuxserver/nextcloud:latest
+    networks:
+      - name: "{{ NET_NAME }}"
+        ipv4_address: "{{ NEXTCLOUD_IP }}"    
     restart_policy: unless-stopped
     exposed_ports: "443"
     networks_cli_compatible: yes
@@ -18,6 +29,9 @@
   docker_container:
     name: mariadb
     image: lscr.io/linuxserver/mariadb:latest
+    networks:
+      - name: "{{ NET_NAME }}"
+        ipv4_address: "{{ MARIADB_IP }}"    
     restart_policy: unless-stopped
     exposed_ports: "3306"
     networks_cli_compatible: yes
@@ -36,6 +50,9 @@
   docker_container:
     name: nginx
     image: lscr.io/linuxserver/nginx:latest
+    networks:
+      - name: "{{ NET_NAME }}"
+        ipv4_address: "{{ NGINX_IP }}"    
     restart_policy: unless-stopped
     published_ports: 
       - "443:443"
