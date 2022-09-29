@@ -1,26 +1,27 @@
 ---
-#- name: TIMEMACHINE network
-#  docker_network:
-#    name: macvlan
-#    driver: macvlan
-#    driver_options:
-#      parent: "ens160"
-#    ipam_config:
-#      - subnet: "10.0.3.0/24"
-#        gateway: "10.0.3.1"
-#        iprange: "10.0.3.0/24"
+- name: TIMEMACHINE network
+  docker_network:
+    name: timemachine
+    driver: macvlan
+    driver_options:
+      parent: "eth0"
+    ipam_config:
+      - subnet: "192.168.19.0/24"
+        gateway: "192.168.19.1"
+        iprange: "192.168.19.0/24"
 
 - name: TIMEMACHINE container
   docker_container:
     name: "{{ TIMEMACHINE_NAME }}"
+    hostname: "timemachine.local"
     image: "{{ TIMEMACHINE_IMAGE }}"
     restart_policy: "unless-stopped"
-    #network_mode: macvlan
-    network_mode: host
+    network_mode: macvlan
+    #network_mode: host
     #networks_cli_compatible: yes
-    #networks:
-    #  - name: "macvlan"
-    #    ipv4_address: "10.0.3.12"
+    networks:
+      - name: "timemachine"
+        ipv4_address: "192.168.19.254"
     volumes:
       - "/mnt/data/timemachine/share:/opt/timemachine"
       - "/mnt/data/timemachine/users:/users"
@@ -55,7 +56,7 @@
     #groups: admins,developers
     append: yes
 
-- name: Add the user taleb
+- name: Add the user Tracey
   ansible.builtin.user:
     name: tracey
     shell: /bin/bash

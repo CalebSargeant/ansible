@@ -1,0 +1,8 @@
+---
+- name: Create Docker Network
+  docker_network:
+    name: "{{ TORRENT_NET_NAME }}"
+    ipam_config:
+      - subnet: "{{ TORRENT_NET_SUBNET }}"
+        gateway: "{{ TORRENT_NET_GW }}"
+        iprange: "{{ TORRENT_NET_SUBNET }}"

@@ -2,16 +2,17 @@
 - name: DELUGE container
   docker_container:
     name: "{{ TORRENT_DELUGE_NAME }}"
+    hostname: "{{ TORRENT_DELUGE_NAME }}"
     image: "{{ TORRENT_DELUGE_IMAGE }}"
     #restart_policy: "no"
     restart_policy: unless-stopped
-    network_mode: host
-    #networks:
-    #  - name: "{{ TORRENT_NET_NAME }}"
-    #    ipv4_address: "{{ TORRENT_DELUGE_IP }}"
-    purge_networks: yes
-    networks_cli_compatible: no
-    #published_ports: "{{ TORRENT_DELUGE_PORT }}:{{ TORRENT_DELUGE_PORT }}"
+    #network_mode: host
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_DELUGE_IP }}"
+    #purge_networks: yes
+    #networks_cli_compatible: no
+    published_ports: "{{ TORRENT_DELUGE_PORT }}:8112"
     volumes:
       - "{{ TORRENT_DELUGE_NAME }}:/config"
       - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"

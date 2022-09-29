@@ -1,0 +1,17 @@
+---
+- name: SMOKEPING container
+  docker_container:
+    name: "smokeping"
+    hostname: "smokeping.local"
+    image: "lscr.io/linuxserver/smokeping:latest"
+    restart_policy: "unless-stopped"
+    published_ports:
+      - "82:80/tcp"
+    volumes:
+      - "smokeping-config:/config"
+      - "smokeping-data:/data"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Africa/Johannesburg"
+...

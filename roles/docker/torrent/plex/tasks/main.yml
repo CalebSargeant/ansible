@@ -2,14 +2,15 @@
 - name: PLEX container
   docker_container:
     name: "{{ TORRENT_PLEX_NAME }}"
+    hostname: "{{ TORRENT_PLEX_NAME }}"
     image: "{{ TORRENT_PLEX_IMAGE }}"
     #restart_policy: "no"
     restart_policy: unless-stopped
-    network_mode: host
-    #networks:
-    #  - name: "{{ TORRENT_NET_NAME }}"
-    #    ipv4_address: "{{ TORRENT_PLEX_IP }}"
-    #published_ports: "{{ TORRENT_PLEX_PORT }}:32400"
+    #network_mode: host
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_PLEX_IP }}"
+    published_ports: "{{ TORRENT_PLEX_PORT }}:32400"
     #purge_networks: yes
     #networks_cli_compatible: no
     privileged: yes

@@ -2,17 +2,18 @@
 - name: SONARR container
   docker_container:
     name: "{{ TORRENT_SONARR_NAME }}"
+    hostname: "{{ TORRENT_SONARR_NAME }}"
     image: "{{ TORRENT_SONARR_IMAGE }}"
     #restart_policy: "no"
     restart_policy: unless-stopped
-    network_mode: host
-    #networks:
-    #  - name: "{{ TORRENT_NET_NAME }}"
-    #    ipv4_address: "{{ TORRENT_SONARR_IP }}"
-    purge_networks: yes
-    networks_cli_compatible: no
-    #published_ports:
-    #  - "{{ TORRENT_SONARR_PORT }}:8989"
+    #network_mode: host
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_SONARR_IP }}"
+    #purge_networks: yes
+    #networks_cli_compatible: no
+    published_ports:
+      - "{{ TORRENT_SONARR_PORT }}:8989"
     volumes:
       - "{{ TORRENT_SONARR_NAME }}:/config"
       - "{{ DATA_LOCATION_SERIES }}:/series"
