@@ -1,0 +1,31 @@
+---
+- name: QBITTORRENT container
+  docker_container:
+    name: "qbittorrent"
+    hostname: "qbittorrent"
+    image: "lscr.io/linuxserver/qbittorrent:latest"
+    #restart_policy: "no"
+    restart_policy: unless-stopped
+    #network_mode: host
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_QBITTORRENT_IP }}"
+    #purge_networks: yes
+    #networks_cli_compatible: no
+    published_ports: 
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+      - "55555:55555"
+    volumes:
+      - "{{ TORRENT_QBITTORRENT_NAME }}:/config"
+      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
+      - "{{ DATA_LOCATION_MOVIES }}:/movies"
+      - "{{ DATA_LOCATION_SERIES }}:/series"
+      - "{{ DATA_LOCATION_BOOKS }}:/books"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+      WEBUI_PORT: "8080"
+...

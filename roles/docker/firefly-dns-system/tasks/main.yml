@@ -48,8 +48,8 @@
     published_ports: 
       - "53:53/udp"
     volumes:
-      - "/mnt/data/cache/data:/data/cache"
-      - "/mnt/data/cache/logs:/data/logs"
+      - "/mnt/4tb/cache/data:/data/cache"
+      - "/mnt/4tb/cache/logs:/data/logs"
     env:
       UPSTREAM_DNS="{{ PIHOLE_IP }}"
       LANCACHE_IP="192.168.19.110"
@@ -68,8 +68,8 @@
       - "80:80"
       - "443:443"
     volumes:
-      - "/mnt/data/cache/data:/data/cache"
-      - "/mnt/data/cache/logs:/data/logs"
+      - "/mnt/4tb/cache/data:/data/cache"
+      - "/mnt/4tb/cache/logs:/data/logs"
     env:
       UPSTREAM_DNS="{{ PIHOLE_IP }}"
       CACHE_MEM_SIZE="300m"
