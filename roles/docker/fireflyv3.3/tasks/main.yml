@@ -42,13 +42,16 @@
     networks_cli_compatible: yes
     exposed_ports: "{{ FFDB_PORT }}"
     env:
-      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Africa/Johannesburg"
+      MYSQL_ROOT_PASSWORD: "{{ MYSQL_PASSWORD }}"
       MYSQL_USER: firefly
       MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
       MYSQL_DATABASE: firefly
     restart_policy: unless-stopped
     volumes:
-      - "{{ FFDB_NAME }}:/var/lib/mysql"
+      - "{{ FFDB_NAME }}:/config"
 
 ### FIREFLY III APP
 - name: Create fireflyiiiapp Container
@@ -59,8 +62,11 @@
       - name: "{{ FFNET_NAME }}"
         ipv4_address: "{{ FF_IP }}"
     networks_cli_compatible: yes
-    published_ports: "{{ FF_PORT }}:8080"
-    exposed_ports: "80:80"
+    published_ports: 
+      - "{{ FF_PORT }}:8080"
+    exposed_ports: 
+      - "80:80"
+      #- "{{ FF_PORT }}:8080"
     env:
       APP_KEY: "{{ APP_KEY }}"
       DB_HOST: "{{ FFDB_NAME }}"
@@ -75,6 +81,7 @@
       MAIL_USERNAME: "{{ MAIL_USERNAME }}"
       MAIL_PASSWORD: "{{ MAIL_PASSWORD }}"
       MAIL_ENCRYPTION: "{{ MAIL_ENCRYPTION }}"
+      TRUSTED_PROXIES: "**"
     restart_policy: unless-stopped
     comparisons:
       '*': ignore
@@ -83,17 +90,17 @@
       - "{{ FF_NAME }}:/var/www/firefly-iii/storage/upload"
 
 ### FIREFLY III UPLOAD - https://firefly-iii.gitbook.io/firefly-iii-csv-importer/installing-and-running/docker
-- name: Create fireflyiiicsv Container
-  docker_container:
-    name: "{{ FFCSV_NAME }}"
-    image: "{{ FFCSV_IMAGE }}"
-    networks:
-      - name: "{{ FFNET_NAME }}"
-        ipv4_address: "{{ FFCSV_IP }}"
-    networks_cli_compatible: yes
-    published_ports: "{{ FFCSV_PORT }}:8080"
-    env:
-      FIREFLY_III_ACCESS_TOKEN: "{{ FIREFLY_ACCESS_TOKEN }}"
-      FIREFLY_III_URI: "{{ FFCSV_URI }}"
-    restart_policy: unless-stopped
+#- name: Create fireflyiiicsv Container
+#  docker_container:
+#    name: "{{ FFCSV_NAME }}"
+#    image: "{{ FFCSV_IMAGE }}"
+#    networks:
+#      - name: "{{ FFNET_NAME }}"
+#        ipv4_address: "{{ FFCSV_IP }}"
+#    networks_cli_compatible: yes
+#    exposed_ports: "{{ FFCSV_PORT }}:8080"
+#    env:
+#      FIREFLY_III_ACCESS_TOKEN: "{{ FIREFLY_ACCESS_TOKEN }}"
+#      FIREFLY_III_URI: "{{ FFCSV_URI }}"
+#    restart_policy: unless-stopped
 ...

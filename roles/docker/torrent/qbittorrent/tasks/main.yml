@@ -12,8 +12,9 @@
         ipv4_address: "{{ TORRENT_QBITTORRENT_IP }}"
     #purge_networks: yes
     #networks_cli_compatible: no
-    published_ports: 
+    exposed_ports:
       - "8080:8080"
+    published_ports: 
       - "6881:6881"
       - "6881:6881/udp"
       - "55555:55555"

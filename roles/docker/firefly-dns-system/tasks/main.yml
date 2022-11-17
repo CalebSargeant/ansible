@@ -20,6 +20,7 @@
       - "53:53/tcp"
       - "53:53/udp"
       - "67:67/udp"
+     # - "81:81:tcp"
     published_ports:
       - "81:81/tcp"
     volumes:
@@ -64,7 +65,7 @@
         ipv4_address: "{{ MONOLITHIC_IP }}"
     restart_policy: always
     networks_cli_compatible: yes
-    published_ports: 
+    exposed_ports: 
       - "80:80"
       - "443:443"
     volumes:
