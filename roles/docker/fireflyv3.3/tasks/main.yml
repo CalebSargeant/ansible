@@ -90,17 +90,17 @@
       - "{{ FF_NAME }}:/var/www/firefly-iii/storage/upload"
 
 ### FIREFLY III UPLOAD - https://firefly-iii.gitbook.io/firefly-iii-csv-importer/installing-and-running/docker
-#- name: Create fireflyiiicsv Container
-#  docker_container:
-#    name: "{{ FFCSV_NAME }}"
-#    image: "{{ FFCSV_IMAGE }}"
-#    networks:
-#      - name: "{{ FFNET_NAME }}"
-#        ipv4_address: "{{ FFCSV_IP }}"
-#    networks_cli_compatible: yes
-#    exposed_ports: "{{ FFCSV_PORT }}:8080"
-#    env:
-#      FIREFLY_III_ACCESS_TOKEN: "{{ FIREFLY_ACCESS_TOKEN }}"
-#      FIREFLY_III_URI: "{{ FFCSV_URI }}"
-#    restart_policy: unless-stopped
+- name: Create fireflyiiicsv Container
+  docker_container:
+    name: "{{ FFCSV_NAME }}"
+    image: "{{ FFCSV_IMAGE }}"
+    networks:
+      - name: "{{ FFNET_NAME }}"
+        ipv4_address: "{{ FFCSV_IP }}"
+    networks_cli_compatible: yes
+    exposed_ports: "{{ FFCSV_PORT }}:8080"
+    env:
+      FIREFLY_III_ACCESS_TOKEN: "{{ FIREFLY_ACCESS_TOKEN }}"
+      FIREFLY_III_URI: "{{ FFCSV_URI }}"
+    restart_policy: unless-stopped
 ...
