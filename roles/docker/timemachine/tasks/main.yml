@@ -23,7 +23,7 @@
       - name: "timemachine"
         ipv4_address: "192.168.19.254"
     volumes:
-      - "/mnt/data/timemachine/share:/opt/timemachine"
+      - "/mnt/data/timemachine/share:/opt"
       - "/mnt/data/timemachine/users:/users"
       - "timemachine-var-lib-samba:/var/lib/samba"
       - "timemachine-var-cache-samba:/var/cache/samba"
@@ -44,34 +44,35 @@
       SHARE_NAME: "TimeMachine"
       SMB_INHERIT_PERMISSIONS: "no"
       SMB_NFS_ACES: "yes"
+      SMB_METADATA: "stream"
       SMB_PORT: "445"
-      SMB_VFS_OBJECTS: "fruit streams_xattr"
+      SMB_VFS_OBJECTS: "acl_xattr fruit streams_xattr"
       VOLUME_SIZE_LIMIT: "0"
       WORKGROUP: "WORKGROUP"
 
-- name: Add the user caleb
-  ansible.builtin.user:
-    name: caleb
-    shell: /bin/bash
-    #groups: admins,developers
-    append: yes
+#- name: Add the user caleb
+#  ansible.builtin.user:
+#    name: caleb
+#    shell: /bin/bash
+#    #groups: admins,developers
+#    append: yes
 
-- name: Add the user Tracey
-  ansible.builtin.user:
-    name: tracey
-    shell: /bin/bash
-    #groups: admins,developers
-    append: yes
+#- name: Add the user Tracey
+#  ansible.builtin.user:
+#    name: tracey
+#    shell: /bin/bash
+#    #groups: admins,developers
+#    append: yes
 
-- name: template caleb config
-  template:
-    src: templates/caleb.conf.j2
-    dest: /mnt/data/timemachine/users/caleb.conf
+#- name: template caleb config
+#  template:
+#    src: templates/caleb.conf.j2
+#    dest: /mnt/data/timemachine/users/caleb.conf
 
-- name: template tracey config
-  template:
-    src: templates/tracey.conf.j2
-    dest: /mnt/data/timemachine/users/tracey.conf
+#- name: template tracey config
+#  template:
+#    src: templates/tracey.conf.j2
+#    dest: /mnt/data/timemachine/users/tracey.conf
 ...
 
 

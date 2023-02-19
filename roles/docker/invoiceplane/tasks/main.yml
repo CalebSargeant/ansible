@@ -1,0 +1,50 @@
+---
+- name: Create Docker Network
+  docker_network:
+    name: "{{ IPNET_NAME }}"
+    ipam_config:
+      - subnet: "{{ IPNET_SUBNET }}"
+        gateway: "{{ IPNET_GW }}"
+        iprange: "{{ IPNET_SUBNET }}"
+
+- name: Create invoiceplanedb Container
+  docker_container:
+    name: "{{ IPDB_NAME }}"
+    image: "{{ IPDB_IMAGE }}"
+    networks:
+      - name: "{{ IPNET_NAME }}"
+        ipv4_address: "{{ IPDB_IP }}"
+    networks_cli_compatible: yes
+    exposed_ports: "{{ IPDB_PORT }}"
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: invoiceplane
+      MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
+      MYSQL_DATABASE: invoiceplane
+    restart_policy: unless-stopped
+    volumes:
+      - "{{ IPDB_NAME }}:/var/lib/mysql"
+
+- name: Create invoiceplaneapp Container
+  docker_container:
+    name: "{{ IP_NAME }}"
+    image: "{{ IP_IMAGE }}"
+    networks:
+      - name: "{{ IPNET_NAME }}"
+        ipv4_address: "{{ IP_IP }}"
+    networks_cli_compatible: yes
+    #published_ports: "85:80"
+    exposed_ports: "80:80"
+    env:
+      TZ: "utc"
+      MYSQL_HOST: "{{ IPDB_IP }}"
+      MYSQL_USER: "invoiceplane"
+      MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
+      MYSQL_DB: "invoiceplane"
+      IP_URL: "http://192.168.19.110"
+      DISABLE_SETUP: "true"
+    volumes:
+      - "{{ IP_NAME }}:/var/www/html/uploads"
+...
+
+
