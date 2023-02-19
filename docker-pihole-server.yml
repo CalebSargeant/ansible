@@ -5,5 +5,5 @@
   vars_files:
   - ~/repos/personal/ansible/vars/docker/pihole-server.yml
   roles:
-    - docker/pihole/install
+    - docker/server-pihole
 ...

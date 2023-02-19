@@ -1,0 +1,38 @@
+---
+### Create the network - to only publish the app and expose db, etc.
+- name: Create Docker Network
+  docker_network:
+    name: "{{ DNS_NAME }}"
+    ipam_config:
+      - subnet: "{{ DNS_SUBNET }}"
+        gateway: "{{ DNS_GW }}"
+        iprange: "{{ DNS_SUBNET }}"
+
+- name: PIHOLE container
+  docker_container:
+    name: "{{ PIHOLE_NAME }}"
+    image: "{{ PIHOLE_IMAGE }}"
+    networks:
+      - name: "{{ DNS_NAME }}"
+        ipv4_address: "{{ PIHOLE_IP }}"
+    restart_policy: "always"
+    #exposed_ports:
+    published_ports:
+      - "81:81/tcp"
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    volumes:
+      - "/etc/pihole/:/etc/pihole/"
+      - "/etc/dnsmasq.d/:/etc/dnsmasq.d/"
+    env:
+      TZ: "{{ TIMEZONE }}"
+      WEBPASSWORD: "{{ PIHOLE_PASSWORD }}"
+      ServerIP: "{{ PIHOLE_IP }}"
+      DNS1: "{{ DNS1 }}"
+      DNS2: "{{ DNS2 }}"
+      DNSMASQ_LISTENING: all
+      WEB_PORT: "81"
+    capabilities:
+      - NET_ADMIN
+...
