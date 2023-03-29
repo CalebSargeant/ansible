@@ -64,8 +64,8 @@
     networks_cli_compatible: yes
     published_ports: 
       - "{{ FF_PORT }}:8080"
-    exposed_ports: 
-      - "80:80"
+    #exposed_ports: 
+      #- "80:80"
       #- "{{ FF_PORT }}:8080"
     env:
       APP_KEY: "{{ APP_KEY }}"
@@ -98,9 +98,10 @@
       - name: "{{ FFNET_NAME }}"
         ipv4_address: "{{ FFCSV_IP }}"
     networks_cli_compatible: yes
-    exposed_ports: "{{ FFCSV_PORT }}:8080"
+    published_ports: "{{ FFCSV_PORT }}:8080"
     env:
       FIREFLY_III_ACCESS_TOKEN: "{{ FIREFLY_ACCESS_TOKEN }}"
       FIREFLY_III_URI: "{{ FFCSV_URI }}"
+      TRUSTED_PROXIES: "**"
     restart_policy: unless-stopped
 ...

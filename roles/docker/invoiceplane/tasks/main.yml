@@ -41,8 +41,9 @@
       MYSQL_USER: "invoiceplane"
       MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
       MYSQL_DB: "invoiceplane"
-      IP_URL: "http://192.168.19.110"
-      DISABLE_SETUP: "true"
+      IP_URL: "https://invoiceplane.sargeant.co"
+      DISABLE_SETUP: "false"
+      IP_DEBUG: "true"
     volumes:
       - "{{ IP_NAME }}:/var/www/html/uploads"
 ...
