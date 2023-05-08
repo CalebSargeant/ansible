@@ -40,7 +40,7 @@
 - name: Create LANCACHE Container
   docker_container:
     name: "lancache"
-    image: "jrcichra/lancachenet-lancache-dns:latest"
+    image: "lancachenet/lancache-dns:latest"
     networks:
       - name: "{{ DNS_NAME }}"
         ipv4_address: "{{ LANCACHE_IP }}"
@@ -49,28 +49,28 @@
     published_ports: 
       - "53:53/udp"
     volumes:
-      - "/mnt/4tb/cache/data:/data/cache"
-      - "/mnt/4tb/cache/logs:/data/logs"
+      - "{{ VOLUME }}/cache/data:/data/cache"
+      - "{{ VOLUME }}/cache/logs:/data/logs"
     env:
       UPSTREAM_DNS="{{ PIHOLE_IP }}"
-      LANCACHE_IP="192.168.19.110"
+      LANCACHE_IP="{{ LANCACHE_IP_OF_HOST }}"
       USE_GENERIC_CACHE=true
 
 - name: Create MONOLITHIC Container
   docker_container:
     name: "monolithic"
-    image: "jrcichra/lancachenet-monolithic:latest"
+    image: "lancachenet/monolithic:latest"
     networks:
       - name: "{{ DNS_NAME }}"
         ipv4_address: "{{ MONOLITHIC_IP }}"
     restart_policy: always
     networks_cli_compatible: yes
-    exposed_ports: 
+    published_ports: 
       - "80:80"
       - "443:443"
     volumes:
-      - "/mnt/4tb/cache/data:/data/cache"
-      - "/mnt/4tb/cache/logs:/data/logs"
+      - "{{ VOLUME }}/cache/data:/data/cache"
+      - "{{ VOLUME }}/cache/logs:/data/logs"
     env:
       UPSTREAM_DNS="{{ PIHOLE_IP }}"
       CACHE_MEM_SIZE="300m"

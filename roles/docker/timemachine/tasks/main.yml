@@ -1,7 +1,7 @@
 ---
 - name: TIMEMACHINE network
   docker_network:
-    name: timemachine
+    name: macvlan
     driver: macvlan
     driver_options:
       parent: "eth0"
@@ -20,7 +20,7 @@
     #network_mode: host
     #networks_cli_compatible: yes
     networks:
-      - name: "timemachine"
+      - name: "macvlan"
         ipv4_address: "192.168.19.254"
     volumes:
       - "/mnt/data/timemachine/share:/opt"
@@ -50,29 +50,29 @@
       VOLUME_SIZE_LIMIT: "0"
       WORKGROUP: "WORKGROUP"
 
-#- name: Add the user caleb
-#  ansible.builtin.user:
-#    name: caleb
-#    shell: /bin/bash
-#    #groups: admins,developers
-#    append: yes
+- name: Add the user caleb
+  ansible.builtin.user:
+    name: caleb
+    shell: /bin/bash
+    #groups: admins,developers
+    append: yes
 
-#- name: Add the user Tracey
-#  ansible.builtin.user:
-#    name: tracey
-#    shell: /bin/bash
-#    #groups: admins,developers
-#    append: yes
+- name: Add the user Tracey
+  ansible.builtin.user:
+    name: tracey
+    shell: /bin/bash
+    #groups: admins,developers
+    append: yes
 
-#- name: template caleb config
-#  template:
-#    src: templates/caleb.conf.j2
-#    dest: /mnt/data/timemachine/users/caleb.conf
+- name: template caleb config
+  template:
+    src: templates/caleb.conf.j2
+    dest: /mnt/data/timemachine/users/caleb.conf
 
-#- name: template tracey config
-#  template:
-#    src: templates/tracey.conf.j2
-#    dest: /mnt/data/timemachine/users/tracey.conf
+- name: template tracey config
+  template:
+    src: templates/tracey.conf.j2
+    dest: /mnt/data/timemachine/users/tracey.conf
 ...
 
 
