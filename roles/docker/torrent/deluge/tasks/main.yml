@@ -18,6 +18,7 @@
       - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
       - "{{ DATA_LOCATION_MOVIES }}:/movies"
       - "{{ DATA_LOCATION_SERIES }}:/series"
+      - "{{ DATA_LOCATION_GAMES }}:/games"
     env:
       PUID: "{{ PUID }}"
       PGID: "{{ PGID }}"

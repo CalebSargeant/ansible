@@ -15,7 +15,7 @@
       - name: "{{ NET_NAME }}"
         ipv4_address: "{{ NEXTCLOUD_IP }}"    
     restart_policy: unless-stopped
-    exposed_ports: "443"
+    exposed_ports: "8443"
     networks_cli_compatible: yes
     volumes:
       - nextcloud:/config
@@ -55,7 +55,7 @@
         ipv4_address: "{{ NGINX_IP }}"    
     restart_policy: unless-stopped
     published_ports: 
-      - "443:443"
+      - "8443:8443"
     networks_cli_compatible: yes
     volumes:
       - nginx:/config
