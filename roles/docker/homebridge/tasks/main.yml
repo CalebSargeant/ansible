@@ -2,7 +2,7 @@
 - name: Create homebridge Container
   docker_container:
     name: "homebridge"
-    image: "oznu/homebridge:latest"
+    image: "homebridge/homebridge:latest"
     #networks:
     #  - name: "{{ IPNET_NAME }}"
     #    ipv4_address: "{{ IP_IP }}"
@@ -10,9 +10,9 @@
     #published_ports: "85:80"
     #exposed_ports: "80:80"
     network_mode: host
-    env:
-      TZ: "Africa/Johannesburg"
-      ENABLE_AVAHI: "0"
+#    env:
+#      TZ: "Africa/Johannesburg"
+#      ENABLE_AVAHI: "0"
     volumes:
       - "homebridge:/homebridge"
 ...
