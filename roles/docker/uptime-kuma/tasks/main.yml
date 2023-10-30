@@ -1,0 +1,15 @@
+#docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:1
+
+- name: UPTIMEKUMA container
+  docker_container:
+    name: "uptime-kuma"
+    image: "louislam/uptime-kuma:1"
+    #restart_policy: "no"
+    restart_policy: unless-stopped
+    network_mode: host
+    #published_ports: "3001:3001"
+    volumes:
+      - "uptime-kuma:/app/data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    # dns_servers:
+    #   - 8.8.8.8

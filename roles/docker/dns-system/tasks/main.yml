@@ -65,7 +65,7 @@
         ipv4_address: "{{ MONOLITHIC_IP }}"
     restart_policy: always
     networks_cli_compatible: yes
-    published_ports: 
+    exposed_ports: 
       - "80:80"
       - "443:443"
     volumes:

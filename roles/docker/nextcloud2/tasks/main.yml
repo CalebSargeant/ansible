@@ -15,7 +15,7 @@
       - name: "{{ NET_NAME }}"
         ipv4_address: "{{ NEXTCLOUD_IP }}"    
     restart_policy: unless-stopped
-    exposed_ports: "8443"
+    exposed_ports: "443"
     networks_cli_compatible: yes
     volumes:
       - nextcloud:/config
@@ -46,30 +46,31 @@
       MYSQL_USER: "nextcloud"
       MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
 
-- name: Create nginx Container
-  docker_container:
-    name: nginx
-    image: lscr.io/linuxserver/nginx:latest
-    networks:
-      - name: "{{ NET_NAME }}"
-        ipv4_address: "{{ NGINX_IP }}"    
-    restart_policy: unless-stopped
-    published_ports: 
-      - "8443:8443"
-    networks_cli_compatible: yes
-    volumes:
-      - nginx:/config
-      - /etc/letsencrypt:/certs
-    env:
-      PUID: "1000"
-      PGID: "1000"
-      TZ: "Africa/Johannesburg"
+# Commented out because nginx must be installed seperately - one nginx container for the whole host
+# - name: Create nginx Container
+#   docker_container:
+#     name: nginx
+#     image: lscr.io/linuxserver/nginx:latest
+#     networks:
+#       - name: "{{ NET_NAME }}"
+#         ipv4_address: "{{ NGINX_IP }}"    
+#     restart_policy: unless-stopped
+#     published_ports: 
+#       - "8443:8443"
+#     networks_cli_compatible: yes
+#     volumes:
+#       - nginx:/config
+#       - /etc/letsencrypt:/certs
+#     env:
+#       PUID: "1000"
+#       PGID: "1000"
+#       TZ: "Africa/Johannesburg"
 
-- name: Copy Nginx config
-  copy:
-    src: templates/default.conf
-    dest: /var/snap/docker/common/var-lib-docker/volumes/nginx/_data/nginx/site-confs/default.conf
+# - name: Copy Nginx config
+#   copy:
+#     src: templates/default.conf
+#     dest: /var/snap/docker/common/var-lib-docker/volumes/nginx/_data/nginx/site-confs/default.conf
 
-- name: Restart nginx
-  command: docker restart nginx
+# - name: Restart nginx
+#   command: docker restart nginx
 ...

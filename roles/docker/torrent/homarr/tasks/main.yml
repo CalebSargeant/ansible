@@ -1,0 +1,22 @@
+# docker run  \
+#   --name homarr \
+#   --restart unless-stopped \
+#   -p 7575:7575 \
+#   -v <your-path>/homarr/configs:/app/data/configs \
+#   -v <your-path>/homarr/icons:/app/public/icons \
+#   -d ghcr.io/ajnart/homarr:latest
+
+
+
+- name: Create HOMARR Container
+  docker_container:
+    name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_HOMARR_IP }}"
+    restart_policy: unless-stopped
+    exposed_ports: "7575:7575"
+    volumes:
+      - /etc/homarr/configs:/app/data/configs
+      - /etc/homarr/icons:/app/public/icons
