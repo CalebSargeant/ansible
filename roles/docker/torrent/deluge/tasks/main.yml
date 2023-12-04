@@ -12,7 +12,7 @@
         ipv4_address: "{{ TORRENT_DELUGE_IP }}"
     #purge_networks: yes
     #networks_cli_compatible: no
-    published_ports: "{{ TORRENT_DELUGE_PORT }}:8112"
+    exposed_ports: "{{ TORRENT_DELUGE_PORT }}:8112"
     volumes:
       - "{{ TORRENT_DELUGE_NAME }}:/config"
       - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"

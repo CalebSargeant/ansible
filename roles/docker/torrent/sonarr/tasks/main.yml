@@ -12,7 +12,7 @@
         ipv4_address: "{{ TORRENT_SONARR_IP }}"
     #purge_networks: yes
     #networks_cli_compatible: no
-    published_ports:
+    exposed_ports:
       - "{{ TORRENT_SONARR_PORT }}:8989"
     volumes:
       - "{{ TORRENT_SONARR_NAME }}:/config"

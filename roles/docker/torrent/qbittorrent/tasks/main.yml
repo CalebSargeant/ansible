@@ -12,18 +12,19 @@
         ipv4_address: "{{ TORRENT_QBITTORRENT_IP }}"
     #purge_networks: yes
     #networks_cli_compatible: no
-    exposed_ports:
-      - "8080:8080"
     published_ports: 
+      - "55555:55555"
+    exposed_ports:
       - "6881:6881"
       - "6881:6881/udp"
-      - "55555:55555"
+      - "8080:8080"      
     volumes:
       - "{{ TORRENT_QBITTORRENT_NAME }}:/config"
-      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
+      - "{{ DATA_LOCATION_QDOWNLOADS }}:/downloads"
       - "{{ DATA_LOCATION_MOVIES }}:/movies"
       - "{{ DATA_LOCATION_SERIES }}:/series"
       - "{{ DATA_LOCATION_BOOKS }}:/books"
+      - "{{ DATA_LOCATION_MUSIC }}:/music"
     env:
       PUID: "{{ PUID }}"
       PGID: "{{ PGID }}"

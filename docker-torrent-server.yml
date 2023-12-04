@@ -3,18 +3,22 @@
   become: yes
   become_method: sudo
   vars_files:
-  - ~/repos/personal/ansible/vars/docker/torrent.yml
+  - ~/repos/personal/ansible/vars/docker/server.yml
   roles:
-#    - docker/torrent/network
-    - docker/torrent/plex
-    - docker/torrent/deluge
-    - docker/torrent/jackett
-    - docker/torrent/radarr
-    - docker/torrent/medusa
+    - docker/torrent/network
+#    - docker/torrent/plex
+    # - docker/torrent/deluge
+    #- docker/torrent/jackett
+    # - docker/torrent/radarr
+    # - docker/torrent/medusa
 #    - docker/torrent/lazylibrarian
-#    - docker/torrent/readarr
-#    - docker/torrent/prowlarr
-#    - docker/torrent/sonarr
+    # - docker/torrent/readarr
+    # - docker/torrent/qbittorrent 
+    - docker/torrent/mp3tag
+    # - docker/torrent/prowlarr
+    # - docker/torrent/sonarr
+#    - docker/torrent/lidarr
+#    - docker/torrent/picard
 #    - docker/torrent/calibre
 #    - docker/torrent/calibre-web
 #    - docker/torrent/pyload

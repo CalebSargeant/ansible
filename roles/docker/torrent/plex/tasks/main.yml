@@ -6,17 +6,18 @@
     image: "{{ TORRENT_PLEX_IMAGE }}"
     #restart_policy: "no"
     restart_policy: unless-stopped
-    #network_mode: host
-    networks:
-      - name: "{{ TORRENT_NET_NAME }}"
-        ipv4_address: "{{ TORRENT_PLEX_IP }}"
-    published_ports: "{{ TORRENT_PLEX_PORT }}:32400"
+    network_mode: host
+    # networks:
+    #   - name: "{{ TORRENT_NET_NAME }}"
+    #     ipv4_address: "{{ TORRENT_PLEX_IP }}"
+    # published_ports: "{{ TORRENT_PLEX_PORT }}:32400"
     #purge_networks: yes
     #networks_cli_compatible: no
     privileged: yes
     volumes:
       - "{{ TORRENT_PLEX_NAME }}:/config"
       - "{{ DATA_LOCATION_MOVIES }}:/movies"
+      - "{{ DATA_LOCATION_MUSIC }}:/music"      
       - "{{ DATA_LOCATION_SERIES }}:/series"
       - "{{ DATA_LOCATION_PHOTOS }}:/photos"
       - "{{ DATA_LOCATION_TRAINING }}:/training"

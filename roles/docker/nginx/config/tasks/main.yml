@@ -1,6 +1,6 @@
 ---
-- name: Copy default.conf
-  ansible.builtin.copy:
+- name: Template default.conf
+  ansible.builtin.template:
     src: templates/{{ SOURCE_NGINX_DEFAULT_CONF }}
     dest: "/etc/nginx/nginx/site-confs/default.conf"
 

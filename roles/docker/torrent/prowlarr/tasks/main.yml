@@ -10,7 +10,7 @@
     networks:
       - name: "{{ TORRENT_NET_NAME }}"
         ipv4_address: "{{ TORRENT_PROWLARR_IP }}"
-    published_ports: "{{ TORRENT_PROWLARR_PORT }}:9696"
+    exposed_ports: "{{ TORRENT_PROWLARR_PORT }}:9696"
     purge_networks: yes
     networks_cli_compatible: no
     volumes:

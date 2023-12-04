@@ -3,19 +3,15 @@
   docker_container:
     name: "{{ TORRENT_READARR_NAME }}"
     image: "{{ TORRENT_READARR_IMAGE }}"
-    #restart_policy: "no"
     restart_policy: unless-stopped
-    network_mode: host
-    #networks:
-    #  - name: "{{ TORRENT_NET_NAME }}"
-    #    ipv4_address: "{{ TORRENT_RADARR_IP }}"
-    #published_ports: "{{ TORRENT_RADARR_PORT }}:{{ TORRENT_RADARR_PORT }}"
-    purge_networks: yes
-    networks_cli_compatible: no
+    networks:
+     - name: "{{ TORRENT_NET_NAME }}"
+       ipv4_address: "{{ TORRENT_READARR_IP }}"
+    published_ports: "{{ TORRENT_READARR_PORT }}:8787"
     volumes:
       - "{{ TORRENT_READARR_NAME }}:/config"
       - "{{ DATA_LOCATION_BOOKS }}:/books"
-      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
+      - "{{ DATA_LOCATION_QDOWNLOADS }}:/downloads"
     env:
       PUID: "{{ PUID }}"
       PGID: "{{ PGID }}"

@@ -16,6 +16,7 @@
       PUID: "1000"
       PGID: "1000"
     volumes:
-      - "{{ NGINX_VOLUME }}:/config"
+      #- "{{ NGINX_VOLUME }}:/config"
+      - "/etc/nginx:/config"
       - "/etc/letsencrypt:/etc/letsencrypt"
 ...
