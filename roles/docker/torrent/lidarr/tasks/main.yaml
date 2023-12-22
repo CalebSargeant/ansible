@@ -1,0 +1,18 @@
+---
+- name: Create LIDARR Container
+  docker_container:
+    name: "{{ TORRENT_LIDARR_NAME }}"
+    image: "{{ TORRENT_LIDARR_IMAGE }}"
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ TORRENT_LIDARR_IP }}"
+    restart_policy: unless-stopped
+    exposed_ports: "8686:8686"
+    volumes:
+      - "{{ TORRENT_LIDARR_NAME }}:/config"
+      - "{{ DATA_LOCATION_DOWNLOADS }}:/downloads"
+      - "{{ DATA_LOCATION_MUSIC }}:/music"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"

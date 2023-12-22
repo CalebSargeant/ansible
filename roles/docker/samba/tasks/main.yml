@@ -1,0 +1,26 @@
+---
+- name: SAMBA container
+  docker_container:
+    name: "{{ SAMBA_NAME }}"
+    hostname: "{{ SAMBA_NAME }}"
+    image: "{{ SAMBA_IMAGE }}"
+    restart_policy: unless-stopped
+    network_mode: host
+    # networks:
+    #   - name: "{{ TORRENT_NET_NAME }}"
+    #     ipv4_address: "{{ SAMBA_IP }}"
+    # published_ports:
+    #   - "139:139"
+    #   - "445:445"
+    privileged: yes
+    volumes:
+      - "{{ DATA_LOCATION }}/share:/data"
+      - "/mnt/torrents/share:/torrents"
+    env:
+      USERID: "{{ PUID }}"
+      GROUPID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+      SHARE: "data;/data;yes;no;no;ubuntu;ubuntu"
+      SHARE2: "torrents;/torrents;yes;no;no;ubuntu;ubuntu"
+      USER: "ubuntu;{{ ADMIN_PASSWORD }}"
+...

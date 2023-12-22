@@ -1,0 +1,23 @@
+---
+- name: PICARD container
+  docker_container:
+    name: "{{ PICARD_NAME }}"
+    hostname: "{{ PICARD_NAME }}"
+    image: "{{ PICARD_IMAGE }}"
+    restart_policy: unless-stopped
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ PICARD_IP }}"
+    published_ports: "{{ PICARD_PORT }}:5800"
+    #purge_networks: yes
+    #networks_cli_compatible: no
+    privileged: yes
+    volumes:
+      - "{{ PICARD_NAME }}:/config"
+      - "{{ DATA_LOCATION_MUSIC }}:/music"
+      - "{{ DATA_LOCATION_BOOKS }}:/books"
+    env:
+      USER_ID: "{{ PUID }}"
+      GROUP_ID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+...

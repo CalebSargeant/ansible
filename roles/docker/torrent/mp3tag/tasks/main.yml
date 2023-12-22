@@ -1,0 +1,25 @@
+---
+- name: MP3TAG container
+  docker_container:
+    name: "{{ MP3TAG_NAME }}"
+    hostname: "{{ MP3TAG_NAME }}"
+    image: "{{ MP3TAG_IMAGE }}"
+    restart_policy: unless-stopped
+    networks:
+      - name: "{{ TORRENT_NET_NAME }}"
+        ipv4_address: "{{ MP3TAG_IP }}"
+    published_ports: 
+      - "{{ MP3TAG_PORT }}:8080"
+      - "3389:3389"
+    privileged: yes
+    volumes:
+      - "{{ MP3TAG_NAME }}:/config"
+      - "{{ DATA_LOCATION_BOOKS_TEMP }}:/temp"
+    env:
+      PUID: "{{ PUID }}"
+      PGID: "{{ PGID }}"
+      TZ: "{{ TIMEZONE }}"
+      APPNAME: mp3tag
+      GUAC_USER: abc
+      GUAC_PASS: 5f4dcc3b5aa765d61d8327deb882cf99
+...

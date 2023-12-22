@@ -1,0 +1,36 @@
+# version: "3.2"
+# services:
+#   koboldai:
+#     build: .
+#     environment:
+#       - DISPLAY=${DISPLAY} 
+#     network_mode: "host"
+#     security_opt:
+#       - label:disable
+#     volumes:
+#       - /tmp/.X11-unix:/tmp/.X11-unix
+#       - /etc/protocols:/etc/protocols:ro
+#       - ../:/content/
+#       - $HOME/.Xauthority:/home/micromamba/.Xauthority:rw
+#     devices:
+#       - /dev/dri
+#       - /dev/nvidia0:/dev/nvidia0
+#       - /dev/nvidiactl:/dev/nvidiactl
+#       - /dev/nvidia-uvm:/dev/nvidia-uvm
+#     deploy:
+#       resources:
+#         reservations:
+#           devices:
+#           - driver: nvidia
+#             device_ids: ['0']
+#             capabilities: [gpu]
+#     group_add:
+#       - video
+
+
+
+---
+- name: KOBOLDAI Docker Compose
+  docker_compose:
+    project_src: /path/to/my_project
+...

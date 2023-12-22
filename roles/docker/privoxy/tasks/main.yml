@@ -1,0 +1,41 @@
+---
+- name: Create Docker Network
+  docker_network:
+    name: "{{ DNS_NAME }}"
+    ipam_config:
+      - subnet: "{{ DNS_SUBNET }}"
+        gateway: "{{ DNS_GW }}"
+        iprange: "{{ DNS_SUBNET }}"
+
+- name: Touch privoxy config
+  file:
+    path: /etc/privoxy/config
+    state: touch
+
+- name: PRIVOXY container
+  docker_container:
+    name: "{{ PRIVOXY_NAME }}"
+    image: "{{ PRIVOXY_IMAGE }}"
+    networks:
+      - name: "{{ DNS_NAME }}"
+        ipv4_address: "{{ PRIVOXY_IP }}"
+    restart_policy: "always"
+    published_ports:
+      - "8118:8118"
+    volumes:
+      - "/etc/privoxy/config:/etc/privoxy/config:ro"
+    #   - "/etc/dnsmasq.d/:/etc/dnsmasq.d/"
+    env:
+      DEBUG_LEVEL: "1"
+    #   WEBPASSWORD: "{{ PIHOLE_PASSWORD }}"
+    #   ServerIP: "{{ PIHOLE_IP }}"
+    #   DNS1: "{{ DNS1 }}"
+    #   DNS2: "{{ DNS2 }}"
+    #   DNSMASQ_LISTENING: all
+    #   WEB_PORT: "81"
+    # capabilities:
+    #   - NET_ADMIN
+...
+
+
+# https://hub.docker.com/r/ajoergensen/privoxy
