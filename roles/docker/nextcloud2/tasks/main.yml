@@ -19,7 +19,7 @@
     networks_cli_compatible: yes
     volumes:
       - nextcloud:/config
-      - /media/data/share:/data
+      - /mnt/data/nextcloud:/data
     env:
       PUID: "1000"
       PGID: "1000"

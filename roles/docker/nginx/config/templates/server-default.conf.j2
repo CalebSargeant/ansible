@@ -2,10 +2,10 @@
 server {
     listen 443 ssl;
 
-    server_name radarr.franklinhouse.co.za;
+    server_name radarr.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/radarr.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/radarr.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/radarr.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/radarr.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ TORRENT_RADARR_IP }}:{{TORRENT_RADARR_PORT}};
@@ -17,10 +17,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name sonarr.franklinhouse.co.za;
+    server_name sonarr.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/sonarr.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/sonarr.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/sonarr.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/sonarr.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ TORRENT_SONARR_IP }}:{{TORRENT_SONARR_PORT}};
@@ -32,10 +32,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name prowlarr.franklinhouse.co.za;
+    server_name prowlarr.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/prowlarr.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/prowlarr.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/prowlarr.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/prowlarr.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ TORRENT_PROWLARR_IP }}:{{TORRENT_PROWLARR_PORT}};
@@ -47,10 +47,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name lidarr.franklinhouse.co.za;
+    server_name lidarr.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/lidarr.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/lidarr.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/lidarr.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/lidarr.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ TORRENT_LIDARR_IP }}:{{TORRENT_LIDARR_PORT}};
@@ -62,10 +62,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name readarr.franklinhouse.co.za;
+    server_name readarr.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/readarr.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/readarr.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/readarr.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/readarr.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ TORRENT_READARR_IP }}:{{TORRENT_READARR_PORT}};
@@ -77,10 +77,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name deluge.franklinhouse.co.za;
+    server_name deluge.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/deluge.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/deluge.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/deluge.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/deluge.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ TORRENT_DELUGE_IP }}:{{TORRENT_DELUGE_PORT}};
@@ -92,10 +92,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name qbittorrent.franklinhouse.co.za;
+    server_name qbittorrent.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/qbittorrent.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/qbittorrent.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/qbittorrent.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/qbittorrent.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ TORRENT_QBITTORRENT_IP }}:{{TORRENT_QBITTORRENT_PORT}};
@@ -107,10 +107,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name picard.franklinhouse.co.za;
+    server_name picard.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/picard.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/picard.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/picard.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/picard.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ PICARD_IP }}:{{PICARD_PORT}};
@@ -122,10 +122,10 @@ server {
 server {
     listen 443 ssl;
 
-    server_name mp3tag.franklinhouse.co.za;
+    server_name mp3tag.{{ DOMAIN }};
 
-    ssl_certificate /etc/letsencrypt/live/mp3tag.franklinhouse.co.za/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/mp3tag.franklinhouse.co.za/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/mp3tag.{{ DOMAIN }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mp3tag.{{ DOMAIN }}/privkey.pem;
 
     location / {
         proxy_pass http://{{ MP3TAG_IP }}:{{MP3TAG_PORT}};
@@ -134,24 +134,24 @@ server {
 }
 
 ### Nextcloud
-# server {
-#   listen        443 ssl http2;
-#   server_name   cloud.franklinhouse.co.za;
+server {
+  listen        443 ssl http2;
+  server_name   cloud.{{ DOMAIN }};
 
-#   ssl_certificate      /etc/letsencrypt/live/cloud.franklinhouse.co.za/fullchain.pem;
-#   ssl_certificate_key  /etc/letsencrypt/live/cloud.franklinhouse.co.za/privkey.pem;
+  ssl_certificate      /etc/letsencrypt/live/cloud.{{ DOMAIN }}/fullchain.pem;
+  ssl_certificate_key  /etc/letsencrypt/live/cloud.{{ DOMAIN }}/privkey.pem;
 
-#   location / {
-#     proxy_pass             https://172.18.0.2:443;
-#     proxy_read_timeout     60;
-#     proxy_connect_timeout  60;
-#     proxy_redirect         off;
+  location / {
+    proxy_pass             https://{{ NEXTCLOUD_IP }}:443;
+    proxy_read_timeout     60;
+    proxy_connect_timeout  60;
+    proxy_redirect         off;
 
-#     # Allow the use of websockets
-#     proxy_http_version 1.1;
-#     proxy_set_header Upgrade $http_upgrade;
-#     proxy_set_header Connection 'upgrade';
-#     proxy_set_header Host $host;
-#     proxy_cache_bypass $http_upgrade;
-#   }
-# }
+    # Allow the use of websockets
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+}

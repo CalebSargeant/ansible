@@ -3,7 +3,8 @@
   become: yes
   become_method: sudo
   vars_files:
-  - ~/repos/personal/ansible/vars/docker/nextcloud2.yml
+  - ~/repos/personal/ansible/vars/docker/server.yml
   roles:
     - docker/nextcloud2
+    - docker/nginx/config
 ...
